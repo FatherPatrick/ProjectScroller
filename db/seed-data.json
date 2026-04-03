@@ -1,0 +1,114 @@
+{
+  "timelineSegments": [
+    {
+      "id": "segment-school",
+      "label": "School",
+      "depthStart": 0,
+      "depthEnd": 25,
+      "projectIds": ["proj-capstone", "proj-research-lab"]
+    },
+    {
+      "id": "segment-career",
+      "label": "Career",
+      "depthStart": 26,
+      "depthEnd": 50,
+      "projectIds": ["proj-career-portal"]
+    },
+    {
+      "id": "segment-roles",
+      "label": "Roles",
+      "depthStart": 51,
+      "depthEnd": 75,
+      "projectIds": ["proj-role-ui-lead"]
+    },
+    {
+      "id": "segment-side-projects",
+      "label": "Side Projects",
+      "depthStart": 76,
+      "depthEnd": 100,
+      "projectIds": ["proj-side-tunnel"]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-capstone",
+      "slug": "school-capstone-analytics",
+      "title": "School Capstone Analytics",
+      "shortDescription": "Built a data visualization capstone dashboard.",
+      "longDescription": "A team-led capstone focused on transforming raw survey data into actionable visual insights.",
+      "startDate": "2019-01-10",
+      "endDate": "2019-05-12",
+      "technologies": ["Angular", "TypeScript", "D3"],
+      "tags": ["School", "Visualization"],
+      "media": [
+        {
+          "type": "image",
+          "url": "/assets/projects/capstone.png",
+          "alt": "Capstone dashboard screenshot"
+        }
+      ],
+      "links": [
+        {
+          "label": "Case Study",
+          "url": "https://example.com/capstone"
+        }
+      ],
+      "timelineWeight": 3
+    },
+    {
+      "id": "proj-research-lab",
+      "slug": "research-lab-tooling",
+      "title": "Research Lab Tooling",
+      "shortDescription": "Internal tools for experiment coordination.",
+      "longDescription": "Created lightweight web tooling for scheduling and tracking recurring lab experiments.",
+      "startDate": "2018-09-01",
+      "endDate": "2019-01-05",
+      "technologies": ["Angular", "Node.js"],
+      "tags": ["School", "Internal Tool"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 2
+    },
+    {
+      "id": "proj-career-portal",
+      "slug": "career-operations-portal",
+      "title": "Career Operations Portal",
+      "shortDescription": "Unified operations dashboard for cross-team workflows.",
+      "longDescription": "Designed and shipped a web portal that consolidated fragmented workflows into one interface.",
+      "startDate": "2020-06-01",
+      "endDate": "2021-11-10",
+      "technologies": ["Angular", "C#", ".NET"],
+      "tags": ["Career", "Dashboard"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 4
+    },
+    {
+      "id": "proj-role-ui-lead",
+      "slug": "role-ui-modernization",
+      "title": "UI Modernization Lead",
+      "shortDescription": "Led modernization of a legacy enterprise UI.",
+      "longDescription": "Owned migration planning and component strategy for a legacy frontend modernization effort.",
+      "startDate": "2022-01-03",
+      "endDate": "2023-06-20",
+      "technologies": ["Angular", "RxJS", "SCSS"],
+      "tags": ["Roles", "Leadership"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 5
+    },
+    {
+      "id": "proj-side-tunnel",
+      "slug": "side-project-tunnel-explorer",
+      "title": "Tunnel Explorer",
+      "shortDescription": "Experimental scroll-to-zoom timeline interface.",
+      "longDescription": "Personal R&D prototype exploring depth-based timeline reveal and direct navigation anchors.",
+      "startDate": "2024-02-14",
+      "technologies": ["Angular", "TypeScript", "Vercel"],
+      "tags": ["Side Projects", "Prototype"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 5
+    }
+  ]
+}

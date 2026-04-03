@@ -1,0 +1,68 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import type { Project } from '../../models/timeline';
+
+@Component({
+  selector: 'app-project-detail',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <aside class="project-detail" role="complementary" aria-label="Project detail">
+      <header class="detail-header">
+        <div class="detail-title-row">
+          <h2 class="detail-title">{{ project.title }}</h2>
+          <button type="button" class="detail-close" (click)="close.emit()" aria-label="Close detail">✕</button>
+        </div>
+        <div class="detail-meta">
+          <span class="detail-dates">
+            {{ project.startDate | date:'MMM yyyy' }}
+            @if (project.endDate) { – {{ project.endDate | date:'MMM yyyy' }} }
+            @else { – Present }
+          </span>
+          <div class="detail-tags">
+            @for (tag of project.tags; track tag) {
+              <span class="detail-tag">{{ tag }}</span>
+            }
+          </div>
+        </div>
+      </header>
+
+      <div class="detail-body">
+        <p class="detail-long-desc">{{ project.longDescription }}</p>
+
+        <section class="detail-section">
+          <h3 class="detail-section-label">Technologies</h3>
+          <ul class="detail-tech-list">
+            @for (tech of project.technologies; track tech) {
+              <li>{{ tech }}</li>
+            }
+          </ul>
+        </section>
+
+        @if (project.links && project.links.length > 0) {
+          <section class="detail-section">
+            <h3 class="detail-section-label">Links</h3>
+            <ul class="detail-links">
+              @for (link of project.links; track link.url) {
+                <li>
+                  <a
+                    [href]="link.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="detail-link">
+                    {{ link.label }} ↗
+                  </a>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+    </aside>
+  `,
+  styleUrl: './project-detail.component.scss'
+})
+export class ProjectDetailComponent {
+  @Input({ required: true }) project!: Project;
+  @Output() close = new EventEmitter<void>();
+}

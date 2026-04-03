@@ -1,0 +1,31 @@
+{
+  "name": "projectscroller",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive portfolio experience where scroll controls zoom depth through a tunnel, revealing projects on a timeline as the user zooms in and collapsing back out when scrolling down.",
+  "scripts": {
+    "dev": "concurrently --kill-others --names \"API,NG\" --prefix-colors \"cyan,magenta\" \"npm run dev:api\" \"npm run dev:frontend\"",
+    "dev:api": "tsx --watch dev-api-server.ts",
+    "dev:frontend": "npm --prefix frontend run start -- --proxy-config src/proxy.conf.json --open false",
+    "build": "npm --prefix frontend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "start:frontend": "npm --prefix frontend run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FatherPatrick/ProjectScroller.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FatherPatrick/ProjectScroller/issues"
+  },
+  "homepage": "https://github.com/FatherPatrick/ProjectScroller#readme",
+  "devDependencies": {
+    "@vercel/node": "^5.3.25",
+    "concurrently": "^9.2.1",
+    "tsx": "^4.21.0",
+    "vercel": "^48.6.0"
+  }
+}

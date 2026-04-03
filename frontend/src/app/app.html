@@ -1,0 +1,88 @@
+<main class="app-shell">
+  <p class="sr-only" aria-live="polite">{{ a11yStatus() }}</p>
+  <section 
+    class="tunnel-stage" 
+    aria-label="Project tunnel stage"
+    [ngStyle]="{ '--depth-glow': depthGlowIntensity() }">
+    <div class="stage-content">
+      <p class="kicker">ProjectScroller</p>
+      @if (activeSegment(); as segment) {
+        <h1 class="segment-heading">{{ segment.label }}</h1>
+      } @else {
+        <h1 class="segment-heading">Exploring</h1>
+      }
+      <p class="subtitle">Scroll to zoom through the timeline. Click a segment to jump.</p>
+      <p class="depth-readout" [class.jumping]="state.isJumping()">
+        depth {{ state.zoomDepth() | number:'1.0-0' }}
+        @if (state.isJumping()) { <span class="jump-indicator">jumping…</span> }
+      </p>
+    </div>
+
+    <div class="tunnel-rings" aria-hidden="true">
+      <div class="ring ring-far"  [style.transform]="ringTransforms().far"></div>
+      <div class="ring ring-mid"  [style.transform]="ringTransforms().mid"></div>
+      <div class="ring ring-near" [style.transform]="ringTransforms().near"></div>
+    </div>
+
+    <div class="depth-bands" aria-hidden="true">
+      @for (band of visibleBands(); track band.segment.id) {
+        <div 
+          class="depth-band"
+          [class.depth-band-active]="band.isActive"
+          [style.--band-opacity]="band.proximityOpacity"
+          [style.--band-glow]="band.glowIntensity">
+          <div class="band-label">{{ band.segment.label }}</div>
+          <div class="band-depth-range">{{ band.depthStart }}–{{ band.depthEnd }}</div>
+        </div>
+      }
+    </div>
+  </section>
+
+    @if (activeProjects().length > 0) {
+      <div class="projects-panel" [class.projects-panel-split]="selectedProject()">
+        <div class="projects-list">
+          <h2 class="projects-panel-heading">
+            {{ activeSegment()?.label }} Projects
+            <span class="projects-count">{{ activeProjects().length }}</span>
+          </h2>
+          <div class="project-cards">
+            @for (project of activeProjects(); track project.id) {
+              <app-project-card
+                [project]="project"
+                [selected]="selectedProject()?.id === project.id"
+                (select)="openProject($event)">
+              </app-project-card>
+            }
+          </div>
+        </div>
+        @if (selectedProject(); as project) {
+          <app-project-detail
+            [project]="project"
+            (close)="closeProject()">
+          </app-project-detail>
+        }
+      </div>
+    }
+
+  <nav class="mini-timeline" [class.mini-timeline-jumping]="state.isJumping()" aria-label="Timeline quick jump navigation">
+    @if (isLoading()) {
+      <p class="loading-state">Loading timeline...</p>
+    } @else if (loadError()) {
+      <p class="error-state">{{ loadError() }}</p>
+    } @else {
+      @for (segment of timelineSegments(); track segment.id) {
+        <button
+          type="button"
+          class="timeline-anchor"
+          [class.timeline-anchor-active]="segment.id === state.activeSegmentId()"
+          [class.timeline-anchor-jumping]="state.isJumping() && segment.id === state.activeSegmentId()"
+          [attr.aria-current]="segment.id === state.activeSegmentId() ? 'true' : null"
+          (click)="jumpToSegment(segment)">
+          <span>{{ segment.label }}</span>
+          <small>{{ segment.depthStart }}–{{ segment.depthEnd }}</small>
+        </button>
+      }
+      <span class="keyboard-hint" aria-hidden="true">← → segments | +/- depth | Home/End edges</span>
+    }
+  </nav>
+</main>
