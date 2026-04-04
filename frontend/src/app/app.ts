@@ -107,11 +107,11 @@ export class App implements OnInit, OnDestroy {
       const side: 'left' | 'right' = index % 2 === 0 ? 'left' : 'right';
       const laneDirection = side === 'left' ? -1 : 1;
       const facingDirection = side === 'left' ? 1 : -1;
-      const baseLaneOffset = 220;
-      const laneCompression = Math.min(distance * 3.2, 140);
+      const baseLaneOffset = 280;
+      const laneCompression = Math.min(distance * 3, 170);
       const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
       const verticalOffset = Math.max(-72, Math.min(72, relativeDepth * 1.4));
-      const zOffset = (currentDepth - depthCenter) * 16;
+      const zOffset = (currentDepth - depthCenter) * 22;
       const rotateX = Math.max(-14, Math.min(14, -relativeDepth * 0.22));
       const rotateY = facingDirection * Math.max(4, Math.min(16, 6 + distance * 0.12));
       const progressPercent = this.getSegmentProgress(segment);

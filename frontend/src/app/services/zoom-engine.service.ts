@@ -13,8 +13,9 @@ export class ZoomEngineService {
 
   private readonly MIN_DEPTH = 0;
   private readonly MAX_DEPTH = 100;
-  private readonly DAMPING_FACTOR = 0.82; // Faster decay: stops within ~5 frames of last input
-  private readonly MOMENTUM_THRESHOLD = 0.5;
+  private readonly DAMPING_FACTOR = 0.94; // Longer decay tail so lingering scroll lasts noticeably longer
+  private readonly MOMENTUM_THRESHOLD = 0.12;
+  private readonly MAX_VELOCITY = 8.5;
 
   private currentVelocity = 0;
   private isAnimating = false;
@@ -35,6 +36,7 @@ export class ZoomEngineService {
   private initializeZoomEngine(): void {
     this.inputNormalizer.zoomDelta$.subscribe((delta: number) => {
       this.currentVelocity += delta;
+      this.currentVelocity = Math.max(-this.MAX_VELOCITY, Math.min(this.MAX_VELOCITY, this.currentVelocity));
       if (!this.isAnimating) {
         this.startMomentumLoop();
       }
