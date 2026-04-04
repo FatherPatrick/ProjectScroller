@@ -4,9 +4,23 @@ import type { Project, TimelineSegment } from './models/timeline';
 import { AppStateService } from './services/app-state.service';
 import { TimelineApiService } from './services/timeline-api.service';
 import { ZoomEngineService } from './services/zoom-engine.service';
-import { DepthBandResolverService } from './services/depth-band-resolver.service';
 import { ProjectCardComponent } from './components/project-card/project-card.component';
 import { ProjectDetailComponent } from './components/project-detail/project-detail.component';
+
+type TunnelSlide = {
+  segment: TimelineSegment;
+  projects: Project[];
+  index: number;
+  side: 'left' | 'right';
+  isActive: boolean;
+  isVisible: boolean;
+  opacity: number;
+  zIndex: number;
+  blur: string;
+  transform: string;
+  progressPercent: number;
+  projectPreviewTitles: string[];
+};
 
 @Component({
   selector: 'app-root',
@@ -18,7 +32,6 @@ import { ProjectDetailComponent } from './components/project-detail/project-deta
 export class App implements OnInit, OnDestroy {
   private readonly timelineApi = inject(TimelineApiService);
   private readonly zoomEngine = inject(ZoomEngineService);
-  private readonly depthBandResolver = inject(DepthBandResolverService);
   private readonly motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   private readonly onMotionChange = (event: MediaQueryListEvent) => {
     this.prefersReducedMotion.set(event.matches);
@@ -43,47 +56,93 @@ export class App implements OnInit, OnDestroy {
     return this.allProjects().filter(p => segment.projectIds.includes(p.id));
   });
 
-  readonly a11yStatus = computed(() => {
-    const segment = this.activeSegment();
-    const depth = Math.round(this.state.zoomDepth());
-    if (!segment) {
-      return `Depth ${depth}.`;
-    }
-    return `Depth ${depth}. Active segment ${segment.label}.`;
+  readonly activeSegmentIndex = computed(() => {
+    const activeId = this.state.activeSegmentId();
+    return this.timelineSegments().findIndex(segment => segment.id === activeId);
   });
 
-  /**
-   * Move each ring in Z-space toward the viewer as depth increases.
-   * Perspective is on the container; these values stay well within clip plane.
-   */
   readonly ringTransforms = computed(() => {
     const depth = this.state.zoomDepth();
-    // Each unit of depth shifts rings 2.5px closer along Z axis.
-    // Base offsets spread rings: far=-240px, mid=-120px, near=0px.
     const travel = depth * 2.5;
     return {
-      far: `translateZ(${-240 + travel}px)`,
-      mid: `translateZ(${-120 + travel}px)`,
-      near: `translateZ(${travel}px)`,
+      far: `translateZ(${-260 + travel}px)`,
+      mid: `translateZ(${-140 + travel}px)`,
+      near: `translateZ(${-20 + travel}px)`
     };
   });
 
-
-  readonly depthBands = computed(() =>
-    this.depthBandResolver.calculateBands(this.timelineSegments())
+  readonly depthGlowIntensity = computed(() =>
+    0.18 + (this.state.zoomDepth() / 100) * 0.62
   );
 
-  readonly visibleBands = computed(() => {
-    const VISIBILITY_RANGE = 50;
-    const currentDepth = this.state.zoomDepth();
-    return this.depthBands().filter(
-      b => Math.abs(b.depthCenter - currentDepth) <= VISIBILITY_RANGE
-    );
+  readonly activeSegmentProgress = computed(() => {
+    const segment = this.activeSegment();
+    if (!segment) {
+      return 0;
+    }
+
+    const span = Math.max(1, segment.depthEnd - segment.depthStart);
+    const rawProgress = (this.state.zoomDepth() - segment.depthStart) / span;
+    return Math.max(0, Math.min(1, rawProgress));
   });
 
-  readonly depthGlowIntensity = computed(() =>
-    (this.state.zoomDepth() / 100) * 0.6
-  );
+  readonly tunnelSlides = computed<TunnelSlide[]>(() => {
+    const segments = this.timelineSegments();
+    const activeId = this.state.activeSegmentId();
+    const currentDepth = this.state.zoomDepth();
+
+    return segments.map((segment, index) => {
+      const projects = this.allProjects().filter(project => segment.projectIds.includes(project.id));
+      const depthCenter = (segment.depthStart + segment.depthEnd) / 2;
+      const relativeDepth = depthCenter - currentDepth;
+      const distance = Math.abs(relativeDepth);
+      const normalizedDistance = Math.min(distance / 34, 1.8);
+      const passedViewer = relativeDepth < -8;
+      const viewerFade = passedViewer
+        ? Math.max(0, 1 - (Math.abs(relativeDepth) - 8) / 18)
+        : 1;
+      const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade);
+      const scale = 0.72 + Math.max(0, 1 - distance / 40) * 0.36;
+      const blurAmount = Math.min(normalizedDistance * 3, 5.5);
+      const side: 'left' | 'right' = index % 2 === 0 ? 'left' : 'right';
+      const laneDirection = side === 'left' ? -1 : 1;
+      const facingDirection = side === 'left' ? 1 : -1;
+      const baseLaneOffset = 220;
+      const laneCompression = Math.min(distance * 3.2, 140);
+      const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
+      const verticalOffset = Math.max(-72, Math.min(72, relativeDepth * 1.4));
+      const zOffset = (currentDepth - depthCenter) * 16;
+      const rotateX = Math.max(-14, Math.min(14, -relativeDepth * 0.22));
+      const rotateY = facingDirection * Math.max(4, Math.min(16, 6 + distance * 0.12));
+      const progressPercent = this.getSegmentProgress(segment);
+
+      return {
+        segment,
+        projects,
+        index,
+        side,
+        isActive: segment.id === activeId,
+        isVisible: distance <= 44,
+        opacity,
+        zIndex: segment.id === activeId ? 5 : Math.max(1, 4 - index),
+        blur: `blur(${blurAmount.toFixed(2)}px)`,
+        transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
+        progressPercent,
+        projectPreviewTitles: projects.slice(0, 3).map(project => project.title)
+      };
+    });
+  });
+
+  readonly a11yStatus = computed(() => {
+    const segment = this.activeSegment();
+    const depth = Math.round(this.state.zoomDepth());
+    const slideCount = this.timelineSegments().length;
+    const slideNumber = this.activeSegmentIndex() + 1;
+    if (!segment) {
+      return `Depth ${depth}.`;
+    }
+    return `Depth ${depth}. Slide ${slideNumber} of ${slideCount}. Active segment ${segment.label}.`;
+  });
 
   ngOnInit(): void {
     this.timelineApi.getTimeline().subscribe({
@@ -180,6 +239,13 @@ export class App implements OnInit, OnDestroy {
     const current = this.state.zoomDepth();
     this.state.setZoomDepth(current + delta);
     this.state.resolveActiveSegment(this.timelineSegments());
+  }
+
+  getSegmentProgress(segment: TimelineSegment): number {
+    const span = Math.max(1, segment.depthEnd - segment.depthStart);
+    const rawProgress = (this.state.zoomDepth() - segment.depthStart) / span;
+    const clamped = Math.max(0, Math.min(1, rawProgress));
+    return Math.round(clamped * 100);
   }
 
   private updateUrlHash(segmentId: string): void {
