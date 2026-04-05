@@ -53,7 +53,7 @@
 			radial-gradient(circle, transparent 0 24%, rgba(255, 255, 255, 0.05) 24.5% 25%, transparent 25.5% 100%);
 		mix-blend-mode: screen;
 		opacity: 0.4;
-		animation: spin-prism 28s linear infinite;
+		animation: spin-prism 28s linear infinite, hue-drift 42s ease-in-out infinite alternate, curvature-burst 11s ease-in-out infinite;
 		transform: rotate(calc(var(--depth-progress, 0) * 180deg));
 	}
 
@@ -63,7 +63,7 @@
 			repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 34px);
 		mix-blend-mode: screen;
 		opacity: 0.32;
-		animation: pulse-spectrum 7s ease-in-out infinite alternate;
+		animation: pulse-spectrum 7s ease-in-out infinite alternate, hue-drift-reverse 36s ease-in-out infinite alternate, orbit-sway 15s ease-in-out infinite;
 	}
 }
 
@@ -192,14 +192,86 @@
 	to { transform: rotate(-12deg) scale(0.98); }
 }
 
+@keyframes hue-drift {
+	from { filter: hue-rotate(0deg) saturate(1.05) brightness(0.98); }
+	50% { filter: hue-rotate(28deg) saturate(1.22) brightness(1.05); }
+	to { filter: hue-rotate(64deg) saturate(1.12) brightness(1.02); }
+}
+
+@keyframes hue-drift-reverse {
+	from { filter: hue-rotate(48deg) saturate(1.08) brightness(1.04); }
+	50% { filter: hue-rotate(12deg) saturate(1.18) brightness(0.98); }
+	to { filter: hue-rotate(-36deg) saturate(1.1) brightness(1.06); }
+}
+
+@keyframes orbit-sway {
+	from { transform: translate3d(-1.5%, -1%, 0) rotate(0deg) scale(0.98); }
+	25% { transform: translate3d(1.2%, -2.4%, 0) rotate(7deg) scale(1.02); }
+	50% { transform: translate3d(2.2%, 1.8%, 0) rotate(-6deg) scale(1.05); }
+	75% { transform: translate3d(-2.4%, 2.1%, 0) rotate(10deg) scale(1.01); }
+	to { transform: translate3d(-1.2%, -1.4%, 0) rotate(-4deg) scale(0.99); }
+}
+
+@keyframes orbit-sway-reverse {
+	from { transform: translate3d(1.2%, 1.4%, 0) rotate(0deg) scale(1); }
+	25% { transform: translate3d(-2.2%, 1.2%, 0) rotate(-8deg) scale(1.04); }
+	50% { transform: translate3d(-1.6%, -2.1%, 0) rotate(6deg) scale(0.98); }
+	75% { transform: translate3d(2.6%, -1.1%, 0) rotate(-11deg) scale(1.03); }
+	to { transform: translate3d(1.4%, 1.1%, 0) rotate(5deg) scale(1.01); }
+}
+
+@keyframes curvature-burst {
+	0%, 16%, 32%, 58%, 100% {
+		border-radius: 50%;
+		clip-path: inset(0 round 50%);
+	}
+	20% {
+		border-radius: 42% 58% 48% 52% / 57% 37% 63% 43%;
+		clip-path: inset(2% 1% 1% 2% round 42% 58% 48% 52% / 57% 37% 63% 43%);
+	}
+	28% {
+		border-radius: 59% 41% 54% 46% / 39% 61% 44% 56%;
+		clip-path: inset(1% 2% 2% 1% round 59% 41% 54% 46% / 39% 61% 44% 56%);
+	}
+	64% {
+		border-radius: 46% 54% 39% 61% / 51% 35% 65% 49%;
+		clip-path: inset(2% 0 1% 1% round 46% 54% 39% 61% / 51% 35% 65% 49%);
+	}
+	72% {
+		border-radius: 61% 39% 57% 43% / 46% 62% 38% 54%;
+		clip-path: inset(1% 2% 0 2% round 61% 39% 57% 43% / 46% 62% 38% 54%);
+	}
+}
+
+@keyframes curvature-burst-soft {
+	0%, 22%, 46%, 100% {
+		border-radius: 50%;
+		clip-path: inset(0 round 50%);
+	}
+	30% {
+		border-radius: 45% 55% 50% 50% / 38% 62% 44% 56%;
+		clip-path: inset(2% 1% 1% 1% round 45% 55% 50% 50% / 38% 62% 44% 56%);
+	}
+	36% {
+		border-radius: 57% 43% 41% 59% / 55% 41% 59% 45%;
+		clip-path: inset(1% 2% 2% 1% round 57% 43% 41% 59% / 55% 41% 59% 45%);
+	}
+	56% {
+		border-radius: 49% 51% 58% 42% / 61% 34% 66% 39%;
+		clip-path: inset(1% 1% 0 2% round 49% 51% 58% 42% / 61% 34% 66% 39%);
+	}
+}
+
 .tunnel-kaleidoscope {
 	position: absolute;
 	inset: -12%;
 	z-index: 1;
 	pointer-events: none;
 	transform-origin: center;
-	filter: saturate(1.25);
+	filter: saturate(1.2) hue-rotate(calc(var(--depth-progress, 0) * 18deg));
+	opacity: 0.62;
 	transform: rotate(calc(var(--depth-progress, 0) * 28deg));
+	animation: orbit-sway 18s ease-in-out infinite, hue-drift 45s ease-in-out infinite alternate;
 }
 
 .kaleido-layer,
@@ -210,6 +282,7 @@
 	inset: 0;
 	border-radius: 50%;
 	pointer-events: none;
+	will-change: transform, filter, opacity, border-radius, clip-path;
 }
 
 .kaleido-layer {
@@ -217,6 +290,7 @@
 	opacity: 0.5;
 	mask-image: radial-gradient(circle at 50% 50%, transparent 0 14%, black 18% 74%, transparent 82%);
 	-webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0 14%, black 18% 74%, transparent 82%);
+	animation-timing-function: linear, ease-in-out, ease-in-out;
 }
 
 .kaleido-layer-primary {
@@ -224,7 +298,7 @@
 		repeating-conic-gradient(from 0deg, rgba(111, 255, 225, 0.2) 0deg 10deg, rgba(91, 116, 255, 0.09) 10deg 20deg, rgba(255, 92, 176, 0.15) 20deg 30deg),
 		radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08), transparent 52%);
 	filter: blur(2px);
-	animation: spin-prism 18s linear infinite;
+	animation: spin-prism 18s linear infinite, orbit-sway 14s ease-in-out infinite, hue-drift 34s ease-in-out infinite alternate, curvature-burst 9.5s ease-in-out infinite;
 }
 
 .kaleido-layer-secondary {
@@ -234,7 +308,7 @@
 		radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(255, 255, 255, 0.05) 36%, transparent 48%);
 	filter: blur(12px);
 	opacity: 0.42;
-	animation: spin-prism-reverse 24s linear infinite;
+	animation: spin-prism-reverse 24s linear infinite, orbit-sway-reverse 17s ease-in-out infinite, hue-drift-reverse 40s ease-in-out infinite alternate, curvature-burst-soft 13s ease-in-out infinite;
 }
 
 .kaleido-layer-tertiary {
@@ -244,7 +318,7 @@
 		radial-gradient(circle at 50% 50%, transparent 0 42%, rgba(255, 255, 255, 0.04) 43%, transparent 54%);
 	opacity: 0.28;
 	filter: blur(18px);
-	animation: drift-spectrum 10s ease-in-out infinite alternate;
+	animation: drift-spectrum 10s ease-in-out infinite alternate, hue-drift 30s ease-in-out infinite alternate, curvature-burst-soft 15s ease-in-out infinite;
 }
 
 .kaleido-layer-quaternary {
@@ -254,7 +328,7 @@
 		radial-gradient(circle at 50% 50%, transparent 0 48%, rgba(255, 255, 255, 0.05) 49%, transparent 56%);
 	opacity: 0.22;
 	filter: blur(6px);
-	animation: spin-prism 14s linear infinite;
+	animation: spin-prism 14s linear infinite, orbit-sway 20s ease-in-out infinite, hue-drift-reverse 38s ease-in-out infinite alternate, curvature-burst 12s ease-in-out infinite;
 }
 
 .kaleido-shards {
@@ -263,6 +337,7 @@
 	-webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0 20%, black 28% 80%, transparent 88%);
 	mix-blend-mode: screen;
 	opacity: 0.24;
+	animation-timing-function: ease-in-out, ease-in-out, ease-in-out;
 }
 
 .kaleido-shards-a {
@@ -270,7 +345,7 @@
 		repeating-conic-gradient(from 0deg, rgba(111, 255, 225, 0.24) 0deg 7deg, transparent 7deg 20deg, rgba(255, 92, 176, 0.18) 20deg 27deg, transparent 27deg 40deg),
 		radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06), transparent 60%);
 	filter: blur(10px);
-	animation: shard-drift 12s ease-in-out infinite alternate;
+	animation: shard-drift 12s ease-in-out infinite alternate, hue-drift 32s ease-in-out infinite alternate, curvature-burst 10.5s ease-in-out infinite;
 }
 
 .kaleido-shards-b {
@@ -280,7 +355,7 @@
 		radial-gradient(circle at 50% 50%, transparent 0 44%, rgba(255, 255, 255, 0.04) 45%, transparent 58%);
 	filter: blur(16px);
 	opacity: 0.18;
-	animation: spin-prism-reverse 16s linear infinite;
+	animation: spin-prism-reverse 16s linear infinite, orbit-sway-reverse 22s ease-in-out infinite, hue-drift-reverse 35s ease-in-out infinite alternate, curvature-burst-soft 14s ease-in-out infinite;
 }
 
 .kaleido-lattice {
@@ -290,7 +365,7 @@
 		repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.04) 0deg 6deg, transparent 6deg 18deg);
 	opacity: 0.18;
 	filter: blur(2px);
-	animation: prism-flicker 8s ease-in-out infinite alternate;
+	animation: prism-flicker 8s ease-in-out infinite alternate, orbit-sway 19s ease-in-out infinite, hue-drift 29s ease-in-out infinite alternate, curvature-burst-soft 12.5s ease-in-out infinite;
 }
 
 .kaleido-core {
@@ -300,7 +375,28 @@
 		conic-gradient(from 0deg, rgba(255, 255, 255, 0.18), rgba(95, 244, 255, 0.08), rgba(255, 92, 176, 0.12), rgba(255, 255, 255, 0.18));
 	filter: blur(14px);
 	opacity: 0.82;
-	animation: pulse-spectrum 5s ease-in-out infinite alternate;
+	animation: pulse-spectrum 5s ease-in-out infinite alternate, orbit-sway-reverse 13s ease-in-out infinite, hue-drift 24s ease-in-out infinite alternate, curvature-burst 8.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tunnel-stage::before,
+	.tunnel-stage::after,
+	.tunnel-kaleidoscope,
+	.kaleido-layer-primary,
+	.kaleido-layer-secondary,
+	.kaleido-layer-tertiary,
+	.kaleido-layer-quaternary,
+	.kaleido-shards-a,
+	.kaleido-shards-b,
+	.kaleido-lattice,
+	.kaleido-core {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+
+	.tunnel-kaleidoscope {
+		filter: saturate(1.2);
+	}
 }
 
 .tunnel-rings {
@@ -312,6 +408,7 @@
 	perspective-origin: 50% 50%;
 	pointer-events: none;
 	z-index: 2;
+	opacity: 0.58;
 }
 
 .tunnel-spokes {

@@ -6,6 +6,7 @@ import { TimelineApiService } from './services/timeline-api.service';
 import { ZoomEngineService } from './services/zoom-engine.service';
 import { ProjectCardComponent } from './components/project-card/project-card.component';
 import { ProjectDetailComponent } from './components/project-detail/project-detail.component';
+import { ThreeTunnelComponent } from './components/three-tunnel/three-tunnel.component';
 
 type TunnelSlide = {
   segment: TimelineSegment;
@@ -67,7 +68,7 @@ type AllSlide = TunnelSlide | SegmentCardSlide | SubmilestoneSlide;
   templateUrl: './app.html',
   styleUrl: './app.scss',
   standalone: true,
-  imports: [CommonModule, ProjectCardComponent, ProjectDetailComponent]
+  imports: [CommonModule, ProjectCardComponent, ProjectDetailComponent, ThreeTunnelComponent]
 })
 export class App implements OnInit, OnDestroy {
   private readonly SCENE_DEPTH_MULTIPLIER = 4;
@@ -405,10 +406,18 @@ export class App implements OnInit, OnDestroy {
   }
 
   jumpToSegment(segment: TimelineSegment): void {
-    this.state.setActiveSegment(segment.id);
     this.selectedProject.set(null);
     this.updateUrlHash(segment.id);
-    this.zoomEngine.jumpToDepth(segment.depthStart, this.prefersReducedMotion() ? 0 : 350);
+    const jumpDuration = this.getManualJumpDuration(this.state.zoomDepth(), segment.depthStart);
+    this.zoomEngine.jumpToDepth(segment.depthStart, jumpDuration);
+  }
+
+  private getManualJumpDuration(currentDepth: number, targetDepth: number): number {
+    const distance = Math.abs(targetDepth - currentDepth);
+    const baseMs = 420;
+    const distanceMs = distance * 1.05;
+    const motionFactor = this.prefersReducedMotion() ? 0.8 : 1;
+    return Math.round(Math.max(420, Math.min(1800, (baseMs + distanceMs) * motionFactor)));
   }
 
   openProject(project: Project): void {

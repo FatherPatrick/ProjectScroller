@@ -10,6 +10,11 @@
         <p class="error-state">{{ loadError() }}</p>
       </div>
     } @else {
+      <app-three-tunnel
+        [depth]="state.zoomDepth()"
+        [reducedMotion]="prefersReducedMotion()">
+      </app-three-tunnel>
+
       <div class="stage-content">
         <p class="kicker">ProjectScroller</p>
         @if (activeSegment(); as segment) {

@@ -84,7 +84,7 @@ export class ZoomEngineService {
   }
 
   /**
-   * Jump to a specific depth with an accelerated cubic ease-out profile (Phase 4).
+   * Jump to a specific depth with a fast mid-flight zoom profile.
    * Resolves active segment on every frame during the animation.
    */
   jumpToDepth(targetDepth: number, durationMs: number = 300): void {
@@ -117,8 +117,10 @@ export class ZoomEngineService {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / durationMs, 1);
 
-        // Ease-out-cubic: fast start, decelerates into target
-        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        // Ease-in-out cubic: readable start/end with fast center traversal
+        const easeProgress = progress < 0.5
+          ? 4 * Math.pow(progress, 3)
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         const newDepth = startDepth + (clampedTarget - startDepth) * easeProgress;
 
         this.ngZone.run(() => {
