@@ -88,3 +88,113 @@
 	border-color: rgba(255, 255, 255, 0.1) !important;
 	background: transparent !important;
 }
+
+.submilestones-container {
+	margin-top: 0.55rem;
+	border-top: 1px solid rgba(94, 255, 199, 0.12);
+	padding-top: 0.55rem;
+}
+
+.submilestones-toggle {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	width: 100%;
+	padding: 0.4rem 0;
+	border: none;
+	background: none;
+	color: var(--text-dim);
+	font: inherit;
+	font-size: 0.8rem;
+	letter-spacing: 0.04em;
+	cursor: pointer;
+	transition: color 0.15s ease;
+
+	&:hover {
+		color: var(--accent-soft);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+}
+
+.toggle-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1rem;
+	font-weight: 600;
+	transition: transform 0.15s ease;
+}
+
+.submilestones-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	margin-top: 0.55rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	animation: slideDown 0.2s ease-out;
+}
+
+.submilestone-item {
+	display: flex;
+	gap: 0.6rem;
+	padding: 0.5rem 0.55rem;
+	border-radius: 8px;
+	background: rgba(94, 255, 199, 0.04);
+	border: 1px solid rgba(94, 255, 199, 0.1);
+	font-size: 0.8rem;
+	transition: background 0.15s ease, border-color 0.15s ease;
+
+	&:hover {
+		background: rgba(94, 255, 199, 0.08);
+		border-color: rgba(94, 255, 199, 0.18);
+	}
+}
+
+.submilestone-date {
+	font-size: 0.72rem;
+	color: var(--accent-soft);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+
+.submilestone-content {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+}
+
+.submilestone-title {
+	font-weight: 500;
+	color: var(--text);
+	font-size: 0.8rem;
+}
+
+.submilestone-description {
+	color: var(--text-dim);
+	font-size: 0.75rem;
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-0.5rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

@@ -33,8 +33,8 @@ export class DepthBandResolverService {
    */
   calculateBands(segments: TimelineSegment[]): DepthBand[] {
     const currentDepth = this.appState.zoomDepth();
-    const MAX_DEPTH = 100;
-    const PROXIMITY_FALLOFF = 30; // Glow effect falls off over 30 depth units
+    const MAX_DEPTH = 1000;
+    const PROXIMITY_FALLOFF = 300; // Glow effect falls off over 300 depth units
 
     return segments.map((segment) => {
       const depthStart = segment.depthStart;

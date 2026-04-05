@@ -30,6 +30,26 @@ import type { Project } from '../../models/timeline';
       <div class="detail-body">
         <p class="detail-long-desc">{{ project.longDescription }}</p>
 
+        @if (project.submilestones && project.submilestones.length > 0) {
+          <section class="detail-section">
+            <h3 class="detail-section-label">Milestones</h3>
+            <div class="detail-submilestones">
+              @for (submilestone of project.submilestones; track submilestone.id) {
+                <div class="submilestone-entry">
+                  <div class="submilestone-marker"></div>
+                  <div class="submilestone-body">
+                    <div class="submilestone-header">
+                      <h4 class="submilestone-entry-title">{{ submilestone.title }}</h4>
+                      <span class="submilestone-entry-date">{{ submilestone.date | date:'MMM dd, yyyy' }}</span>
+                    </div>
+                    <p class="submilestone-entry-desc">{{ submilestone.description }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        }
+
         <section class="detail-section">
           <h3 class="detail-section-label">Technologies</h3>
           <ul class="detail-tech-list">

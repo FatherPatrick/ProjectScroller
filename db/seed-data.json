@@ -4,29 +4,80 @@
       "id": "segment-school",
       "label": "School",
       "depthStart": 0,
-      "depthEnd": 25,
-      "projectIds": ["proj-capstone", "proj-research-lab"]
+      "depthEnd": 250,
+      "projectIds": [],
+      "segmentCardIds": ["card-major", "card-years", "card-projects"]
     },
     {
       "id": "segment-career",
       "label": "Career",
-      "depthStart": 26,
-      "depthEnd": 50,
-      "projectIds": ["proj-career-portal"]
+      "depthStart": 251,
+      "depthEnd": 500,
+      "projectIds": [],
+      "segmentCardIds": ["card-company-a", "card-company-b"]
     },
     {
       "id": "segment-roles",
       "label": "Roles",
-      "depthStart": 51,
-      "depthEnd": 75,
-      "projectIds": ["proj-role-ui-lead"]
+      "depthStart": 501,
+      "depthEnd": 750,
+      "projectIds": ["proj-role-ui-lead"],
+      "segmentCardIds": []
     },
     {
       "id": "segment-side-projects",
       "label": "Side Projects",
-      "depthStart": 76,
-      "depthEnd": 100,
-      "projectIds": ["proj-side-tunnel"]
+      "depthStart": 751,
+      "depthEnd": 1000,
+      "projectIds": ["proj-side-tunnel"],
+      "segmentCardIds": []
+    }
+  ],
+  "segmentCards": [
+    {
+      "id": "card-major",
+      "segmentId": "segment-school",
+      "title": "Major",
+      "description": "Computer Science with a focus on human-computer interaction",
+      "depthStart": 0,
+      "depthEnd": 90,
+      "projectIds": []
+    },
+    {
+      "id": "card-years",
+      "segmentId": "segment-school",
+      "title": "Years",
+      "description": "2016 - 2019, State University",
+      "depthStart": 90,
+      "depthEnd": 170,
+      "projectIds": []
+    },
+    {
+      "id": "card-projects",
+      "segmentId": "segment-school",
+      "title": "Major Projects",
+      "description": "Capstone and research contributions",
+      "depthStart": 170,
+      "depthEnd": 250,
+      "projectIds": ["proj-capstone", "proj-research-lab"]
+    },
+    {
+      "id": "card-company-a",
+      "segmentId": "segment-career",
+      "title": "Company A",
+      "description": "Expanded operations platform to enterprise scale",
+      "depthStart": 251,
+      "depthEnd": 380,
+      "projectIds": ["proj-career-portal"]
+    },
+    {
+      "id": "card-company-b",
+      "segmentId": "segment-career",
+      "title": "Company B",
+      "description": "Led UI modernization and product infrastructure",
+      "depthStart": 380,
+      "depthEnd": 500,
+      "projectIds": ["proj-role-ui-lead"]
     }
   ],
   "projects": [
@@ -53,7 +104,39 @@
           "url": "https://example.com/capstone"
         }
       ],
-      "timelineWeight": 3
+      "timelineWeight": 3,
+      "submilestones": [
+        {
+          "id": "sub-capstone-1",
+          "title": "Requirements & Data Exploration",
+          "description": "Gathered requirements from stakeholders and analyzed the survey dataset structure.",
+          "date": "2019-01-15"
+        },
+        {
+          "id": "sub-capstone-2",
+          "title": "Component Architecture Design",
+          "description": "Built reusable Angular components and data pipeline for visualization.",
+          "date": "2019-02-10"
+        },
+        {
+          "id": "sub-capstone-3",
+          "title": "D3 Visualizations Prototype",
+          "description": "Developed interactive charts and graphs for key metrics.",
+          "date": "2019-03-15"
+        },
+        {
+          "id": "sub-capstone-4",
+          "title": "User Testing & Feedback",
+          "description": "Conducted user testing sessions and iterated on design based on feedback.",
+          "date": "2019-04-10"
+        },
+        {
+          "id": "sub-capstone-5",
+          "title": "Final Polish & Deployment",
+          "description": "Performance optimization, accessibility improvements, and production deployment.",
+          "date": "2019-05-05"
+        }
+      ]
     },
     {
       "id": "proj-research-lab",
@@ -81,7 +164,39 @@
       "tags": ["Career", "Dashboard"],
       "media": [],
       "links": [],
-      "timelineWeight": 4
+      "timelineWeight": 4,
+      "submilestones": [
+        {
+          "id": "sub-career-1",
+          "title": "Workflow Analysis & Documentation",
+          "description": "Interviewed teams to understand existing workflows and pain points.",
+          "date": "2020-07-15"
+        },
+        {
+          "id": "sub-career-2",
+          "title": "Backend API & Data Model",
+          "description": "Built C# REST APIs and database schema to support unified operations.",
+          "date": "2020-09-20"
+        },
+        {
+          "id": "sub-career-3",
+          "title": "Frontend Dashboard MVP",
+          "description": "Created initial dashboard with core workflow integrations.",
+          "date": "2020-11-30"
+        },
+        {
+          "id": "sub-career-4",
+          "title": "Testing & Performance Tuning",
+          "description": "Comprehensive testing and optimization for scale and reliability.",
+          "date": "2021-02-15"
+        },
+        {
+          "id": "sub-career-5",
+          "title": "Stakeholder Training & Rollout",
+          "description": "Trained teams and managed phased rollout across departments.",
+          "date": "2021-10-01"
+        }
+      ]
     },
     {
       "id": "proj-role-ui-lead",

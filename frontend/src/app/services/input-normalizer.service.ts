@@ -9,8 +9,8 @@ export class InputNormalizerService {
   private wheelDelta$ = new Subject<number>();
   private touchDelta$ = new Subject<number>();
   private lastTouchDistance = 0;
-  private readonly WHEEL_DELTA_SCALE = 0.008; // Each wheel tick contributes ~0.8 velocity units
-  private readonly PINCH_SCALE = 0.3; // Scale pinch distance change to zoom delta
+  private readonly WHEEL_DELTA_SCALE = 0.0025; // Smaller per-tick depth change for slower tunnel travel
+  private readonly PINCH_SCALE = 0.1; // Keep touch zoom aligned with slower wheel traversal
   private readonly THROTTLE_MS = 50; // Throttle input events to avoid overwhelming updates
 
   readonly zoomDelta$: Observable<number> = merge(

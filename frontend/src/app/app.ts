@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import type { Project, TimelineSegment } from './models/timeline';
+import type { Project, TimelineSegment, SubMilestone, SegmentCard } from './models/timeline';
 import { AppStateService } from './services/app-state.service';
 import { TimelineApiService } from './services/timeline-api.service';
 import { ZoomEngineService } from './services/zoom-engine.service';
@@ -11,6 +11,7 @@ type TunnelSlide = {
   segment: TimelineSegment;
   projects: Project[];
   index: number;
+  globalIndex?: number;
   side: 'left' | 'right';
   isActive: boolean;
   isVisible: boolean;
@@ -20,7 +21,46 @@ type TunnelSlide = {
   transform: string;
   progressPercent: number;
   projectPreviewTitles: string[];
+  isSubmilestone: false;
+  isSegmentCard: false;
+  depth: number;
 };
+
+type SegmentCardSlide = {
+  segment: TimelineSegment;
+  card: SegmentCard;
+  projects: Project[];
+  index: number;
+  globalIndex?: number;
+  side: 'left' | 'right';
+  isVisible: boolean;
+  opacity: number;
+  zIndex: number;
+  blur: string;
+  transform: string;
+  isSubmilestone: false;
+  isSegmentCard: true;
+  depth: number;
+};
+
+type SubmilestoneSlide = {
+  segment: TimelineSegment;
+  project: Project;
+  submilestone: SubMilestone;
+  index: number;
+  globalIndex: number;
+  side: 'left' | 'right';
+  isVisible: boolean;
+  opacity: number;
+  zIndex: number;
+  blur: string;
+  transform: string;
+  isSubmilestone: true;
+  isSegmentCard: false;
+  depth: number;
+};
+
+type AllSlide = TunnelSlide | SegmentCardSlide | SubmilestoneSlide;
 
 @Component({
   selector: 'app-root',
@@ -30,6 +70,18 @@ type TunnelSlide = {
   imports: [CommonModule, ProjectCardComponent, ProjectDetailComponent]
 })
 export class App implements OnInit, OnDestroy {
+  private readonly SCENE_DEPTH_MULTIPLIER = 4;
+  private readonly DEPTH_VISIBILITY_RANGE = 260;
+  private readonly DEPTH_NORMALIZATION_RANGE = 220;
+  private readonly DEPTH_FADE_START = 48;
+  private readonly DEPTH_FADE_RANGE = 96;
+  private readonly DEPTH_SCALE_RANGE = 260;
+  private readonly DEPTH_LATERAL_COMPRESSION = 0.12;
+  private readonly DEPTH_VERTICAL_FACTOR = 0.18;
+  private readonly DEPTH_Z_FACTOR = 8.5;
+  private readonly DEPTH_ROTATE_X_FACTOR = 0.018;
+  private readonly DEPTH_ROTATE_Y_FACTOR = 0.012;
+
   private readonly timelineApi = inject(TimelineApiService);
   private readonly zoomEngine = inject(ZoomEngineService);
   private readonly motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -40,6 +92,7 @@ export class App implements OnInit, OnDestroy {
   readonly state = inject(AppStateService);
   readonly timelineSegments = signal<TimelineSegment[]>([]);
   readonly allProjects = signal<Project[]>([]);
+  readonly allSegmentCards = signal<SegmentCard[]>([]);
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
   readonly selectedProject = signal<Project | null>(null);
@@ -72,7 +125,7 @@ export class App implements OnInit, OnDestroy {
   });
 
   readonly depthGlowIntensity = computed(() =>
-    0.18 + (this.state.zoomDepth() / 100) * 0.62
+    0.18 + (this.state.zoomDepth() / 1000) * 0.62
   );
 
   readonly activeSegmentProgress = computed(() => {
@@ -86,52 +139,220 @@ export class App implements OnInit, OnDestroy {
     return Math.max(0, Math.min(1, rawProgress));
   });
 
-  readonly tunnelSlides = computed<TunnelSlide[]>(() => {
+  readonly tunnelSlides = computed<AllSlide[]>(() => {
     const segments = this.timelineSegments();
+    const cards = this.allSegmentCards();
     const activeId = this.state.activeSegmentId();
     const currentDepth = this.state.zoomDepth();
+    const allSlides: AllSlide[] = [];
+    let globalIndex = 0;
 
-    return segments.map((segment, index) => {
+    segments.forEach((segment, segmentIndex) => {
       const projects = this.allProjects().filter(project => segment.projectIds.includes(project.id));
       const depthCenter = (segment.depthStart + segment.depthEnd) / 2;
-      const relativeDepth = depthCenter - currentDepth;
-      const distance = Math.abs(relativeDepth);
-      const normalizedDistance = Math.min(distance / 34, 1.8);
-      const passedViewer = relativeDepth < -8;
-      const viewerFade = passedViewer
-        ? Math.max(0, 1 - (Math.abs(relativeDepth) - 8) / 18)
-        : 1;
-      const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade);
-      const scale = 0.72 + Math.max(0, 1 - distance / 40) * 0.36;
-      const blurAmount = Math.min(normalizedDistance * 3, 5.5);
-      const side: 'left' | 'right' = index % 2 === 0 ? 'left' : 'right';
-      const laneDirection = side === 'left' ? -1 : 1;
-      const facingDirection = side === 'left' ? 1 : -1;
-      const baseLaneOffset = 280;
-      const laneCompression = Math.min(distance * 3, 170);
-      const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
-      const verticalOffset = Math.max(-72, Math.min(72, relativeDepth * 1.4));
-      const zOffset = (currentDepth - depthCenter) * 22;
-      const rotateX = Math.max(-14, Math.min(14, -relativeDepth * 0.22));
-      const rotateY = facingDirection * Math.max(4, Math.min(16, 6 + distance * 0.12));
-      const progressPercent = this.getSegmentProgress(segment);
-
-      return {
+      
+      // Collect segment cards for this segment
+      const segmentCards = cards.filter(card => card.segmentId === segment.id);
+      
+      // Add main segment slide
+      const mainSlide = this.calculateMainSlide(
         segment,
         projects,
-        index,
-        side,
-        isActive: segment.id === activeId,
-        isVisible: distance <= 44,
-        opacity,
-        zIndex: segment.id === activeId ? 5 : Math.max(1, 4 - index),
-        blur: `blur(${blurAmount.toFixed(2)}px)`,
-        transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
-        progressPercent,
-        projectPreviewTitles: projects.slice(0, 3).map(project => project.title)
-      };
+        segmentIndex,
+        depthCenter,
+        currentDepth,
+        activeId
+      );
+      allSlides.push(mainSlide);
+      globalIndex++;
+
+      // Add segment card slides in depth order
+      segmentCards.sort((a, b) => a.depthStart - b.depthStart);
+      segmentCards.forEach((card, cardIndex) => {
+        const cardCenter = (card.depthStart + card.depthEnd) / 2;
+        const cardProjects = this.allProjects().filter(p => card.projectIds.includes(p.id));
+        const cardSlide = this.calculateSegmentCardSlide(
+          segment,
+          card,
+          cardProjects,
+          globalIndex,
+          cardCenter,
+          currentDepth,
+          cardIndex % 2 === 0 ? 'left' : 'right'
+        );
+        allSlides.push(cardSlide);
+        globalIndex++;
+      });
+
+      // Add submilestone slides
+      projects.forEach(project => {
+        if (project.submilestones && project.submilestones.length > 0) {
+          const submilestoneSpacing = (segment.depthEnd - segment.depthStart) / (project.submilestones.length + 1);
+          project.submilestones.forEach((submilestone, subIndex) => {
+            const submilestoneDepth = segment.depthStart + submilestoneSpacing * (subIndex + 1);
+            const subSlide = this.calculateSubmilestoneSlide(
+              segment,
+              project,
+              submilestone,
+              globalIndex,
+              submilestoneDepth,
+              currentDepth,
+              subIndex % 2 === 0 ? 'left' : 'right'
+            );
+            allSlides.push(subSlide);
+            globalIndex++;
+          });
+        }
+      });
     });
+
+    return allSlides;
   });
+
+  private calculateMainSlide(
+    segment: TimelineSegment,
+    projects: Project[],
+    index: number,
+    depthCenter: number,
+    currentDepth: number,
+    activeId: string | null
+  ): TunnelSlide {
+    const relativeDepth = depthCenter - currentDepth;
+    const sceneRelativeDepth = relativeDepth * this.SCENE_DEPTH_MULTIPLIER;
+    const distance = Math.abs(sceneRelativeDepth);
+    const normalizedDistance = Math.min(distance / this.DEPTH_NORMALIZATION_RANGE, 1.8);
+    const passedViewer = sceneRelativeDepth < -this.DEPTH_FADE_START;
+    const viewerFade = passedViewer
+      ? Math.max(0, 1 - (Math.abs(sceneRelativeDepth) - this.DEPTH_FADE_START) / this.DEPTH_FADE_RANGE)
+      : 1;
+    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade);
+    const scale = 0.72 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.36;
+    const blurAmount = Math.min(normalizedDistance * 3, 5.5);
+    const side: 'left' | 'right' = index % 2 === 0 ? 'left' : 'right';
+    const laneDirection = side === 'left' ? -1 : 1;
+    const facingDirection = side === 'left' ? 1 : -1;
+    const baseLaneOffset = 280;
+    const laneCompression = Math.min(distance * this.DEPTH_LATERAL_COMPRESSION, 170);
+    const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
+    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * this.DEPTH_VERTICAL_FACTOR));
+    const zOffset = -sceneRelativeDepth * this.DEPTH_Z_FACTOR;
+    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * this.DEPTH_ROTATE_X_FACTOR));
+    const rotateY = facingDirection * Math.max(4, Math.min(18, 6 + distance * this.DEPTH_ROTATE_Y_FACTOR));
+    const progressPercent = this.getSegmentProgress(segment);
+
+    return {
+      segment,
+      projects,
+      index,
+      side,
+      isActive: segment.id === activeId,
+      isVisible: distance <= this.DEPTH_VISIBILITY_RANGE,
+      opacity,
+      zIndex: segment.id === activeId ? 5 : Math.max(1, 4 - index),
+      blur: `blur(${blurAmount.toFixed(2)}px)`,
+      transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
+      progressPercent,
+      projectPreviewTitles: projects.slice(0, 3).map(project => project.title),
+      isSubmilestone: false,
+      isSegmentCard: false,
+      depth: depthCenter
+    };
+  }
+
+  private calculateSegmentCardSlide(
+    segment: TimelineSegment,
+    card: SegmentCard,
+    projects: Project[],
+    index: number,
+    depth: number,
+    currentDepth: number,
+    side: 'left' | 'right'
+  ): SegmentCardSlide {
+    const relativeDepth = depth - currentDepth;
+    const sceneRelativeDepth = relativeDepth * this.SCENE_DEPTH_MULTIPLIER;
+    const distance = Math.abs(sceneRelativeDepth);
+    const normalizedDistance = Math.min(distance / this.DEPTH_NORMALIZATION_RANGE, 1.8);
+    const passedViewer = sceneRelativeDepth < -this.DEPTH_FADE_START;
+    const viewerFade = passedViewer
+      ? Math.max(0, 1 - (Math.abs(sceneRelativeDepth) - this.DEPTH_FADE_START) / this.DEPTH_FADE_RANGE)
+      : 1;
+    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade) * 0.8;
+    const scale = 0.6 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.3;
+    const blurAmount = Math.min(normalizedDistance * 3, 5.5);
+    const laneDirection = side === 'left' ? -1 : 1;
+    const facingDirection = side === 'left' ? 1 : -1;
+    const baseLaneOffset = 220;
+    const laneCompression = Math.min(distance * this.DEPTH_LATERAL_COMPRESSION, 130);
+    const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
+    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * this.DEPTH_VERTICAL_FACTOR));
+    const zOffset = -sceneRelativeDepth * this.DEPTH_Z_FACTOR;
+    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * this.DEPTH_ROTATE_X_FACTOR));
+    const rotateY = facingDirection * Math.max(4, Math.min(18, 6 + distance * this.DEPTH_ROTATE_Y_FACTOR));
+
+    return {
+      segment,
+      card,
+      projects,
+      index,
+      side,
+      isVisible: distance <= this.DEPTH_VISIBILITY_RANGE,
+      opacity,
+      zIndex: Math.max(0, 3 - Math.floor(distance / 80)),
+      blur: `blur(${blurAmount.toFixed(2)}px)`,
+      transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
+      isSubmilestone: false,
+      isSegmentCard: true,
+      depth
+    };
+  }
+
+  private calculateSubmilestoneSlide(
+    segment: TimelineSegment,
+    project: Project,
+    submilestone: SubMilestone,
+    globalIndex: number,
+    depth: number,
+    currentDepth: number,
+    side: 'left' | 'right'
+  ): SubmilestoneSlide {
+    const relativeDepth = depth - currentDepth;
+    const sceneRelativeDepth = relativeDepth * this.SCENE_DEPTH_MULTIPLIER;
+    const distance = Math.abs(sceneRelativeDepth);
+    const normalizedDistance = Math.min(distance / this.DEPTH_NORMALIZATION_RANGE, 1.8);
+    const passedViewer = sceneRelativeDepth < -this.DEPTH_FADE_START;
+    const viewerFade = passedViewer
+      ? Math.max(0, 1 - (Math.abs(sceneRelativeDepth) - this.DEPTH_FADE_START) / this.DEPTH_FADE_RANGE)
+      : 1;
+    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade) * 0.7;
+    const scale = 0.5 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.25;
+    const blurAmount = Math.min(normalizedDistance * 3, 5.5);
+    const laneDirection = side === 'left' ? -1 : 1;
+    const facingDirection = side === 'left' ? 1 : -1;
+    const baseLaneOffset = 160;
+    const laneCompression = Math.min(distance * this.DEPTH_LATERAL_COMPRESSION, 100);
+    const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
+    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * this.DEPTH_VERTICAL_FACTOR));
+    const zOffset = -sceneRelativeDepth * this.DEPTH_Z_FACTOR;
+    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * this.DEPTH_ROTATE_X_FACTOR));
+    const rotateY = facingDirection * Math.max(4, Math.min(18, 6 + distance * this.DEPTH_ROTATE_Y_FACTOR));
+
+    return {
+      segment,
+      project,
+      submilestone,
+      index: globalIndex,
+      globalIndex,
+      side,
+      isVisible: distance <= this.DEPTH_VISIBILITY_RANGE,
+      opacity,
+      zIndex: Math.max(0, 3 - Math.floor(distance / 80)),
+      blur: `blur(${blurAmount.toFixed(2)}px)`,
+      transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
+      isSubmilestone: true,
+      isSegmentCard: false,
+      depth
+    };
+  }
 
   readonly a11yStatus = computed(() => {
     const segment = this.activeSegment();
@@ -148,6 +369,7 @@ export class App implements OnInit, OnDestroy {
     this.timelineApi.getTimeline().subscribe({
       next: (response) => {
         this.timelineSegments.set(response.timelineSegments);
+        this.allSegmentCards.set(response.segmentCards || []);
         this.zoomEngine.setSegments(response.timelineSegments);
 
         // Resolve initial segment from URL hash or default to first

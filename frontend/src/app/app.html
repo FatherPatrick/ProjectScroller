@@ -48,37 +48,79 @@
       </div>
 
       <div class="tunnel-slides" aria-hidden="true">
-        @for (slide of tunnelSlides(); track slide.segment.id) {
-          <article
-            class="tunnel-slide"
-            [class.tunnel-slide-left]="slide.side === 'left'"
-            [class.tunnel-slide-right]="slide.side === 'right'"
-            [class.tunnel-slide-active]="slide.isActive"
-            [class.tunnel-slide-visible]="slide.isVisible"
-            [style.opacity]="slide.opacity"
-            [style.transform]="slide.transform"
-            [style.filter]="slide.blur"
-            [style.z-index]="slide.zIndex">
-            <div class="tunnel-slide-surface">
-              <div class="tunnel-slide-header">
-                <span class="tunnel-slide-index">{{ slide.index + 1 }}/{{ timelineSegments().length }}</span>
-                <span class="tunnel-slide-range">{{ slide.segment.depthStart }}–{{ slide.segment.depthEnd }}</span>
+        @for (slide of tunnelSlides(); track slide.globalIndex || slide.index) {
+          @if (!slide.isSubmilestone && !slide.isSegmentCard) {
+            <article
+              class="tunnel-slide"
+              [class.tunnel-slide-left]="slide.side === 'left'"
+              [class.tunnel-slide-right]="slide.side === 'right'"
+              [class.tunnel-slide-active]="slide.isActive"
+              [class.tunnel-slide-visible]="slide.isVisible"
+              [style.opacity]="slide.opacity"
+              [style.transform]="slide.transform"
+              [style.filter]="slide.blur"
+              [style.z-index]="slide.zIndex">
+              <div class="tunnel-slide-surface">
+                <div class="tunnel-slide-header">
+                  <span class="tunnel-slide-index">{{ slide.index + 1 }}/{{ timelineSegments().length }}</span>
+                  <span class="tunnel-slide-range">{{ slide.segment.depthStart }}–{{ slide.segment.depthEnd }}</span>
+                </div>
+                <h2 class="tunnel-slide-title">{{ slide.segment.label }}</h2>
+                <p class="tunnel-slide-copy">{{ slide.projects.length }} projects anchored in this chapter.</p>
+                <div class="slide-progress" aria-hidden="true">
+                  <span class="slide-progress-fill" [style.width.%]="slide.progressPercent"></span>
+                </div>
+                <div class="tunnel-slide-projects">
+                  @for (title of slide.projectPreviewTitles; track title) {
+                    <span class="tunnel-slide-project-pill">{{ title }}</span>
+                  }
+                  @if (slide.projects.length > slide.projectPreviewTitles.length) {
+                    <span class="tunnel-slide-project-pill tunnel-slide-project-pill-muted">+{{ slide.projects.length - slide.projectPreviewTitles.length }} more</span>
+                  }
+                </div>
               </div>
-              <h2 class="tunnel-slide-title">{{ slide.segment.label }}</h2>
-              <p class="tunnel-slide-copy">{{ slide.projects.length }} projects anchored in this chapter.</p>
-              <div class="slide-progress" aria-hidden="true">
-                <span class="slide-progress-fill" [style.width.%]="slide.progressPercent"></span>
-              </div>
-              <div class="tunnel-slide-projects">
-                @for (title of slide.projectPreviewTitles; track title) {
-                  <span class="tunnel-slide-project-pill">{{ title }}</span>
+            </article>
+          } @else if (slide.isSegmentCard) {
+            <article
+              class="tunnel-slide tunnel-slide-segment-card"
+              [class.tunnel-slide-left]="slide.side === 'left'"
+              [class.tunnel-slide-right]="slide.side === 'right'"
+              [class.tunnel-slide-visible]="slide.isVisible"
+              [style.opacity]="slide.opacity"
+              [style.transform]="slide.transform"
+              [style.filter]="slide.blur"
+              [style.z-index]="slide.zIndex">
+              <div class="tunnel-slide-surface tunnel-slide-surface-card">
+                <div class="segment-card-marker"></div>
+                <h3 class="tunnel-slide-card-title">{{ slide.card.title }}</h3>
+                <p class="tunnel-slide-card-desc">{{ slide.card.description }}</p>
+                @if (slide.projects.length > 0) {
+                  <div class="tunnel-slide-card-projects">
+                    @for (project of slide.projects; track project.id) {
+                      <span class="tunnel-slide-card-project-tag">{{ project.title }}</span>
+                    }
+                  </div>
                 }
-                @if (slide.projects.length > slide.projectPreviewTitles.length) {
-                  <span class="tunnel-slide-project-pill tunnel-slide-project-pill-muted">+{{ slide.projects.length - slide.projectPreviewTitles.length }} more</span>
-                }
               </div>
-            </div>
-          </article>
+            </article>
+          } @else {
+            <article
+              class="tunnel-slide tunnel-slide-submilestone"
+              [class.tunnel-slide-left]="slide.side === 'left'"
+              [class.tunnel-slide-right]="slide.side === 'right'"
+              [class.tunnel-slide-visible]="slide.isVisible"
+              [style.opacity]="slide.opacity"
+              [style.transform]="slide.transform"
+              [style.filter]="slide.blur"
+              [style.z-index]="slide.zIndex">
+              <div class="tunnel-slide-surface tunnel-slide-surface-sub">
+                <div class="submilestone-marker"></div>
+                <h3 class="tunnel-slide-submilestone-title">{{ slide.submilestone.title }}</h3>
+                <p class="tunnel-slide-submilestone-desc">{{ slide.submilestone.description }}</p>
+                <span class="tunnel-slide-submilestone-date">{{ slide.submilestone.date | date:'MMM dd, yyyy' }}</span>
+              </div>
+            </article>
+          }
         }
       </div>
     }

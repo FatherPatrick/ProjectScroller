@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type { Project } from '../../models/timeline';
 
@@ -30,6 +30,34 @@ import type { Project } from '../../models/timeline';
         }
       </ul>
     </button>
+
+    @if (project.submilestones && project.submilestones.length > 0) {
+      <div class="submilestones-container">
+        <button
+          type="button"
+          class="submilestones-toggle"
+          (click)="toggleSubmilestones($event)"
+          aria-expanded="{{isExpanded()}}"
+          [attr.aria-label]="'Toggle sub-milestones for ' + project.title">
+          <span class="toggle-icon">{{ isExpanded() ? '−' : '+' }}</span>
+          <span class="toggle-text">{{ project.submilestones.length }} milestones</span>
+        </button>
+
+        @if (isExpanded()) {
+          <ul class="submilestones-list">
+            @for (submilestone of project.submilestones; track submilestone.id) {
+              <li class="submilestone-item">
+                <div class="submilestone-date">{{ submilestone.date | date:'MMM dd' }}</div>
+                <div class="submilestone-content">
+                  <div class="submilestone-title">{{ submilestone.title }}</div>
+                  <div class="submilestone-description">{{ submilestone.description }}</div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
   `,
   styleUrl: './project-card.component.scss'
 })
@@ -37,4 +65,11 @@ export class ProjectCardComponent {
   @Input({ required: true }) project!: Project;
   @Input() selected = false;
   @Output() select = new EventEmitter<Project>();
+
+  readonly isExpanded = signal(false);
+
+  toggleSubmilestones(event: Event) {
+    event.stopPropagation();
+    this.isExpanded.update(v => !v);
+  }
 }

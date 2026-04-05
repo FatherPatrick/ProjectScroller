@@ -9,6 +9,13 @@ export type ProjectLink = {
   url: string;
 };
 
+export type SubMilestone = {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+};
+
 export type Project = {
   id: string;
   slug: string;
@@ -22,6 +29,17 @@ export type Project = {
   media: ProjectMedia[];
   links: ProjectLink[];
   timelineWeight: number;
+  submilestones?: SubMilestone[];
+};
+
+export type SegmentCard = {
+  id: string;
+  segmentId: string;
+  title: string;
+  description: string;
+  depthStart: number;
+  depthEnd: number;
+  projectIds: string[];
 };
 
 export type TimelineSegment = {
@@ -30,9 +48,11 @@ export type TimelineSegment = {
   depthStart: number;
   depthEnd: number;
   projectIds: string[];
+  segmentCardIds?: string[];
 };
 
 export type SeedData = {
   timelineSegments: TimelineSegment[];
+  segmentCards?: SegmentCard[];
   projects: Project[];
 };

@@ -12,10 +12,10 @@ export class ZoomEngineService {
   private ngZone = inject(NgZone);
 
   private readonly MIN_DEPTH = 0;
-  private readonly MAX_DEPTH = 100;
-  private readonly DAMPING_FACTOR = 0.94; // Longer decay tail so lingering scroll lasts noticeably longer
-  private readonly MOMENTUM_THRESHOLD = 0.12;
-  private readonly MAX_VELOCITY = 8.5;
+  private readonly MAX_DEPTH = 1000;
+  private readonly DAMPING_FACTOR = 0.975; // Slower decay for a smoother, longer ease-out
+  private readonly MOMENTUM_THRESHOLD = 0.04;
+  private readonly MAX_VELOCITY = 3.2;
 
   private currentVelocity = 0;
   private isAnimating = false;
