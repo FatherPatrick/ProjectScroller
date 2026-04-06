@@ -4,7 +4,7 @@ import type { TimelineSegment } from '../models/timeline';
 @Injectable({ providedIn: 'root' })
 export class AppStateService {
   readonly minDepth = 0;
-  readonly maxDepth = 100;
+  readonly maxDepth = 1000;
 
   readonly zoomDepth = signal(0);
   readonly activeSegmentId = signal<string | null>(null);

@@ -31,40 +31,13 @@
 	border: 1px solid rgba(111, 255, 225, calc(0.28 + var(--depth-glow, 0) * 0.24));
 	border-radius: 28px;
 	background:
-		radial-gradient(circle at 50% 50%, rgba(50, 208, 255, 0.12), transparent 22%),
-		radial-gradient(circle at 50% 12%, rgba(111, 255, 225, calc(0.08 + var(--depth-glow, 0) * 0.12)), transparent 34%),
-		conic-gradient(from 180deg at 50% 50%, rgba(17, 27, 53, 0.98), rgba(12, 39, 62, 0.94), rgba(31, 13, 58, 0.94), rgba(7, 22, 38, 0.98), rgba(17, 27, 53, 0.98));
+		radial-gradient(circle at 50% 52%, rgba(86, 170, 255, 0.18), transparent 42%),
+		radial-gradient(circle at 50% 0%, rgba(124, 255, 221, 0.12), transparent 36%),
+		linear-gradient(170deg, rgba(8, 20, 38, 0.98), rgba(5, 16, 30, 0.98));
 	box-shadow:
-		inset 0 0 clamp(32px, 4vw, 88px) rgba(111, 255, 225, calc(var(--depth-glow, 0) * 0.08)),
-		inset 0 0 160px rgba(86, 58, 255, 0.08),
+		inset 0 0 clamp(40px, 6vw, 120px) rgba(111, 255, 225, calc(var(--depth-glow, 0) * 0.12)),
+		inset 0 0 220px rgba(68, 116, 255, 0.08),
 		0 30px 80px rgba(0, 0, 0, 0.35);
-
-	&::before,
-	&::after {
-		content: '';
-		position: absolute;
-		inset: -18%;
-		pointer-events: none;
-	}
-
-	&::before {
-		background:
-			repeating-conic-gradient(from 0deg, rgba(111, 255, 225, 0.08) 0deg 12deg, rgba(67, 116, 255, 0.04) 12deg 24deg, rgba(255, 111, 201, 0.06) 24deg 36deg),
-			radial-gradient(circle, transparent 0 24%, rgba(255, 255, 255, 0.05) 24.5% 25%, transparent 25.5% 100%);
-		mix-blend-mode: screen;
-		opacity: 0.4;
-		animation: spin-prism 28s linear infinite, hue-drift 42s ease-in-out infinite alternate, curvature-burst 11s ease-in-out infinite;
-		transform: rotate(calc(var(--depth-progress, 0) * 180deg));
-	}
-
-	&::after {
-		background:
-			radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(91, 255, 228, 0.08) 31% 34%, transparent 35% 100%),
-			repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 34px);
-		mix-blend-mode: screen;
-		opacity: 0.32;
-		animation: pulse-spectrum 7s ease-in-out infinite alternate, hue-drift-reverse 36s ease-in-out infinite alternate, orbit-sway 15s ease-in-out infinite;
-	}
 }
 
 .kicker {

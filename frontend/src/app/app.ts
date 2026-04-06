@@ -115,16 +115,6 @@ export class App implements OnInit, OnDestroy {
     return this.timelineSegments().findIndex(segment => segment.id === activeId);
   });
 
-  readonly ringTransforms = computed(() => {
-    const depth = this.state.zoomDepth();
-    const travel = depth * 2.5;
-    return {
-      far: `translateZ(${-260 + travel}px)`,
-      mid: `translateZ(${-140 + travel}px)`,
-      near: `translateZ(${-20 + travel}px)`
-    };
-  });
-
   readonly depthGlowIntensity = computed(() =>
     0.18 + (this.state.zoomDepth() / 1000) * 0.62
   );

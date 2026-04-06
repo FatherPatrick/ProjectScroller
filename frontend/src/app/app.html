@@ -32,26 +32,6 @@
         </p>
       </div>
 
-      <div class="tunnel-kaleidoscope" aria-hidden="true">
-        <div class="kaleido-layer kaleido-layer-primary"></div>
-        <div class="kaleido-layer kaleido-layer-secondary"></div>
-        <div class="kaleido-layer kaleido-layer-tertiary"></div>
-        <div class="kaleido-layer kaleido-layer-quaternary"></div>
-        <div class="kaleido-shards kaleido-shards-a"></div>
-        <div class="kaleido-shards kaleido-shards-b"></div>
-        <div class="kaleido-lattice"></div>
-        <div class="kaleido-core"></div>
-      </div>
-
-      <div class="tunnel-rings" aria-hidden="true">
-        <div class="ring ring-far" [style.transform]="ringTransforms().far"></div>
-        <div class="ring ring-mid" [style.transform]="ringTransforms().mid"></div>
-        <div class="ring ring-near" [style.transform]="ringTransforms().near"></div>
-        <div class="ring ring-echo ring-echo-a"></div>
-        <div class="ring ring-echo ring-echo-b"></div>
-        <div class="tunnel-spokes"></div>
-      </div>
-
       <div class="tunnel-slides" aria-hidden="true">
         @for (slide of tunnelSlides(); track slide.globalIndex || slide.index) {
           @if (!slide.isSubmilestone && !slide.isSegmentCard) {

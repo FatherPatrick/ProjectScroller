@@ -25,4 +25,31 @@ body {
 		radial-gradient(circle at 15% 20%, rgba(94, 255, 199, 0.09), transparent 35%),
 		radial-gradient(circle at 80% 80%, rgba(80, 180, 255, 0.08), transparent 40%),
 		linear-gradient(150deg, var(--bg-0), var(--bg-1));
+	background-size: 145% 145%, 130% 130%, 100% 100%;
+	background-position: 16% 22%, 78% 80%, 50% 50%;
+	animation: ambient-gradient-shift 38s ease-in-out infinite alternate, ambient-gradient-drift 72s linear infinite;
+}
+
+@keyframes ambient-gradient-shift {
+	from {
+		background-position: 12% 20%, 84% 78%, 50% 50%;
+	}
+	50% {
+		background-position: 20% 28%, 72% 74%, 47% 53%;
+	}
+	to {
+		background-position: 10% 30%, 86% 72%, 53% 48%;
+	}
+}
+
+@keyframes ambient-gradient-drift {
+	from {
+		background-size: 140% 140%, 124% 124%, 100% 100%;
+	}
+	50% {
+		background-size: 152% 152%, 136% 136%, 104% 104%;
+	}
+	to {
+		background-size: 146% 146%, 128% 128%, 101% 101%;
+	}
 }
