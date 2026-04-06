@@ -471,6 +471,8 @@
 	transform-style: preserve-3d;
 	transform-origin: center center;
 	will-change: transform, opacity, filter;
+	pointer-events: auto;
+	cursor: pointer;
 	transition: transform 0.22s linear, opacity 0.22s linear, filter 0.22s linear;
 }
 

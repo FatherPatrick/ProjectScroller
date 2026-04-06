@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type { Project, TimelineSegment, SubMilestone, SegmentCard } from './models/timeline';
 import { AppStateService } from './services/app-state.service';
@@ -90,6 +90,9 @@ export class App implements OnInit, OnDestroy {
     this.prefersReducedMotion.set(event.matches);
   };
 
+  @ViewChild('projectsPanel')
+  private projectsPanelRef?: ElementRef<HTMLElement>;
+
   readonly state = inject(AppStateService);
   readonly timelineSegments = signal<TimelineSegment[]>([]);
   readonly allProjects = signal<Project[]>([]);
@@ -107,7 +110,11 @@ export class App implements OnInit, OnDestroy {
   readonly activeProjects = computed(() => {
     const segment = this.activeSegment();
     if (!segment) return [];
-    return this.allProjects().filter(p => segment.projectIds.includes(p.id));
+    const segmentCardProjectIds = this.allSegmentCards()
+      .filter(card => card.segmentId === segment.id)
+      .flatMap(card => card.projectIds ?? []);
+    const relatedIds = new Set<string>([...segment.projectIds, ...segmentCardProjectIds]);
+    return this.allProjects().filter(project => relatedIds.has(project.id));
   });
 
   readonly activeSegmentIndex = computed(() => {
@@ -140,7 +147,7 @@ export class App implements OnInit, OnDestroy {
 
     segments.forEach((segment, segmentIndex) => {
       const projects = this.allProjects().filter(project => segment.projectIds.includes(project.id));
-      const depthCenter = (segment.depthStart + segment.depthEnd) / 2;
+      const mainDepth = segment.depthStart;
       
       // Collect segment cards for this segment
       const segmentCards = cards.filter(card => card.segmentId === segment.id);
@@ -150,7 +157,7 @@ export class App implements OnInit, OnDestroy {
         segment,
         projects,
         segmentIndex,
-        depthCenter,
+        mainDepth,
         currentDepth,
         activeId
       );
@@ -404,10 +411,10 @@ export class App implements OnInit, OnDestroy {
 
   private getManualJumpDuration(currentDepth: number, targetDepth: number): number {
     const distance = Math.abs(targetDepth - currentDepth);
-    const baseMs = 420;
-    const distanceMs = distance * 1.05;
-    const motionFactor = this.prefersReducedMotion() ? 0.8 : 1;
-    return Math.round(Math.max(420, Math.min(1800, (baseMs + distanceMs) * motionFactor)));
+    const baseMs = 950;
+    const distanceMs = distance * 2.4;
+    const motionFactor = this.prefersReducedMotion() ? 0.85 : 1;
+    return Math.round(Math.max(1000, Math.min(4200, (baseMs + distanceMs) * motionFactor)));
   }
 
   openProject(project: Project): void {
@@ -418,6 +425,44 @@ export class App implements OnInit, OnDestroy {
 
   closeProject(): void {
     this.selectedProject.set(null);
+  }
+
+  onTunnelSlideClick(slide: AllSlide): void {
+    this.state.setActiveSegment(slide.segment.id);
+
+    const targetProject = this.resolveSlideProject(slide);
+    if (targetProject) {
+      this.selectedProject.set(targetProject);
+    }
+
+    this.scrollToProjectsPanel();
+  }
+
+  private resolveSlideProject(slide: AllSlide): Project | null {
+    if (slide.isSubmilestone) {
+      return slide.project;
+    }
+
+    if (slide.isSegmentCard && slide.projects.length > 0) {
+      return slide.projects[0];
+    }
+
+    if (!slide.isSegmentCard && !slide.isSubmilestone && slide.projects.length > 0) {
+      return slide.projects[0];
+    }
+
+    const activeList = this.activeProjects();
+    return activeList.length > 0 ? activeList[0] : null;
+  }
+
+  private scrollToProjectsPanel(): void {
+    const element = this.projectsPanelRef?.nativeElement;
+    if (!element) {
+      return;
+    }
+
+    const behavior: ScrollBehavior = this.prefersReducedMotion() ? 'auto' : 'smooth';
+    element.scrollIntoView({ behavior, block: 'start' });
   }
 
   @HostListener('document:keydown', ['$event'])

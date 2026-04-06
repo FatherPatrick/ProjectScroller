@@ -2,82 +2,95 @@
   "timelineSegments": [
     {
       "id": "segment-school",
-      "label": "School",
+      "label": "Education",
+      "subDescription": "Oregon State University graduate with applied computer science training and a data visualization focus.",
       "depthStart": 0,
       "depthEnd": 250,
       "projectIds": [],
-      "segmentCardIds": ["card-major", "card-years", "card-projects"]
+      "segmentCardIds": ["card-projects"]
     },
     {
       "id": "segment-career",
       "label": "Career",
+      "subDescription": "Built dashboards, APIs, and data workflows across Intel, Cambia Health Solutions, and BaseSite.",
       "depthStart": 251,
       "depthEnd": 500,
       "projectIds": [],
-      "segmentCardIds": ["card-company-a", "card-company-b"]
-    },
-    {
-      "id": "segment-roles",
-      "label": "Roles",
-      "depthStart": 501,
-      "depthEnd": 750,
-      "projectIds": ["proj-role-ui-lead"],
-      "segmentCardIds": []
+      "segmentCardIds": ["card-company-intel", "card-company-cambia", "card-company-basesite"]
     },
     {
       "id": "segment-side-projects",
       "label": "Side Projects",
+      "subDescription": "Public GitHub builds spanning mobile + backend systems, game-focused web tooling, and this cinematic portfolio tunnel.",
       "depthStart": 751,
       "depthEnd": 1000,
-      "projectIds": ["proj-side-tunnel"],
-      "segmentCardIds": []
+      "projectIds": ["proj-binx", "proj-tarkle", "proj-scroller"],
+      "segmentCardIds": ["card-side-binx", "card-side-tarkle", "card-side-scroller"]
     }
   ],
   "segmentCards": [
     {
-      "id": "card-major",
-      "segmentId": "segment-school",
-      "title": "Major",
-      "description": "Computer Science with a focus on human-computer interaction",
-      "depthStart": 0,
-      "depthEnd": 90,
-      "projectIds": []
-    },
-    {
-      "id": "card-years",
-      "segmentId": "segment-school",
-      "title": "Years",
-      "description": "2016 - 2019, State University",
-      "depthStart": 90,
-      "depthEnd": 170,
-      "projectIds": []
-    },
-    {
       "id": "card-projects",
       "segmentId": "segment-school",
-      "title": "Major Projects",
-      "description": "Capstone and research contributions",
-      "depthStart": 170,
-      "depthEnd": 250,
-      "projectIds": ["proj-capstone", "proj-research-lab"]
+      "title": "Oregon State University - BS Applied Computer Science",
+      "description": "Coursework emphasized software engineering, data science, and visualization. Also completed Intel System Administrator training.",
+      "depthStart": 28,
+      "depthEnd": 88,
+      "projectIds": ["proj-capstone"]
     },
     {
-      "id": "card-company-a",
+      "id": "card-company-intel",
       "segmentId": "segment-career",
-      "title": "Company A",
-      "description": "Expanded operations platform to enterprise scale",
+      "title": "Facilities Engineer Intern at Intel",
+      "description": "Automated backend reporting with Python and SQL across multiple databases, built Power BI dashboards, and improved engineer efficiency through data workflow automation.",
       "depthStart": 251,
-      "depthEnd": 380,
-      "projectIds": ["proj-career-portal"]
+      "depthEnd": 313,
+      "projectIds": ["intel-dashboards", "intel-community-of-practice"]
     },
     {
-      "id": "card-company-b",
+      "id": "card-company-cambia",
       "segmentId": "segment-career",
-      "title": "Company B",
-      "description": "Led UI modernization and product infrastructure",
-      "depthStart": 380,
+      "title": "Mobile Application Developer Intern at Cambia Health Solutions",
+      "description": "Developed user stories and iterative UI/UX prototypes for the flagship Regence app, supported testing and code quality, and helped reduce technical debt.",
+      "depthStart": 344,
+      "depthEnd": 412,
+      "projectIds": ["cambia-development", "cambia-regulations"]
+    },
+    {
+      "id": "card-company-basesite",
+      "segmentId": "segment-career",
+      "title": "Data Scientist at BaseSite",
+      "description": "Designed C#/MSSQL backend processes and Power BI reporting for semiconductor operations, supported API integrations, and maintained high-impact dashboards for large user groups.",
+      "depthStart": 443,
       "depthEnd": 500,
-      "projectIds": ["proj-role-ui-lead"]
+      "projectIds": ["basesite-support", "basesite-lspx", "basesite-npm"]
+    },
+    {
+      "id": "card-side-binx",
+      "segmentId": "segment-side-projects",
+      "title": "projectBinx",
+      "description": "Anonymous poll-first social app built as a React Native + Node/Postgres monorepo with auth, feed interactions, and API documentation.",
+      "depthStart": 751,
+      "depthEnd": 833,
+      "projectIds": ["proj-binx"]
+    },
+    {
+      "id": "card-side-tarkle",
+      "segmentId": "segment-side-projects",
+      "title": "Tarkle",
+      "description": "Interactive Tarkov-focused React/Vite platform with modular game logic, GraphQL data integration, and serverless contact workflows.",
+      "depthStart": 834,
+      "depthEnd": 916,
+      "projectIds": ["proj-tarkle"]
+    },
+    {
+      "id": "card-side-scroller",
+      "segmentId": "segment-side-projects",
+      "title": "ProjectScroller",
+      "description": "Cinematic scroll-to-zoom portfolio experience with depth-based navigation, timeline storytelling, and accessibility-first interactions.",
+      "depthStart": 917,
+      "depthEnd": 1000,
+      "projectIds": ["proj-scroller"]
     }
   ],
   "projects": [
@@ -213,16 +226,57 @@
       "timelineWeight": 5
     },
     {
-      "id": "proj-side-tunnel",
-      "slug": "side-project-tunnel-explorer",
-      "title": "Tunnel Explorer",
-      "shortDescription": "Experimental scroll-to-zoom timeline interface.",
-      "longDescription": "Personal R&D prototype exploring depth-based timeline reveal and direct navigation anchors.",
-      "startDate": "2024-02-14",
-      "technologies": ["Angular", "TypeScript", "Vercel"],
-      "tags": ["Side Projects", "Prototype"],
+      "id": "proj-binx",
+      "slug": "project-binx",
+      "title": "projectBinx",
+      "shortDescription": "Poll-first social app with a React Native client and Node/Express backend.",
+      "longDescription": "Monorepo side project featuring a React Native mobile app, Express API, PostgreSQL data layer, Swagger docs, and ad-backed feed experiments. Built to demonstrate full-stack product ownership from auth and feed interactions through deployment-oriented local orchestration.",
+      "startDate": "2025-01-15",
+      "technologies": ["React Native", "TypeScript", "Node.js", "Express", "PostgreSQL", "Docker"],
+      "tags": ["Side Projects", "Mobile", "Full Stack"],
       "media": [],
-      "links": [],
+      "links": [
+        {
+          "label": "GitHub Repository",
+          "url": "https://github.com/FatherPatrick/projectBinx"
+        }
+      ],
+      "timelineWeight": 5
+    },
+    {
+      "id": "proj-tarkle",
+      "slug": "tarkle",
+      "title": "Tarkle",
+      "shortDescription": "Interactive Tarkov-themed web platform with game logic, tools, and content pages.",
+      "longDescription": "Resume-showcase project built with React + Vite featuring modular game domain architecture, content-heavy routing, GraphQL-backed data handling, and Vercel serverless contact workflows. Iterated with ongoing UX, SEO, and platform expansion work.",
+      "startDate": "2025-07-01",
+      "technologies": ["React", "Vite", "JavaScript", "GraphQL", "Vercel", "Resend"],
+      "tags": ["Side Projects", "Web App", "Frontend"],
+      "media": [],
+      "links": [
+        {
+          "label": "GitHub Repository",
+          "url": "https://github.com/FatherPatrick/Tarkle"
+        }
+      ],
+      "timelineWeight": 5
+    },
+    {
+      "id": "proj-scroller",
+      "slug": "project-scroller",
+      "title": "ProjectScroller",
+      "shortDescription": "Depth-based portfolio experience with scroll-to-zoom tunnel navigation.",
+      "longDescription": "Interactive portfolio application combining an Angular frontend with TypeScript API routes and seeded data. Focused on motion systems, keyboard accessibility, timeline navigation, and data-driven project storytelling in a cinematic UI.",
+      "startDate": "2026-03-25",
+      "technologies": ["Angular", "TypeScript", "SCSS", "RxJS", "Node.js", "Vercel"],
+      "tags": ["Side Projects", "Portfolio", "Frontend"],
+      "media": [],
+      "links": [
+        {
+          "label": "GitHub Repository",
+          "url": "https://github.com/FatherPatrick/ProjectScroller"
+        }
+      ],
       "timelineWeight": 5
     }
   ]

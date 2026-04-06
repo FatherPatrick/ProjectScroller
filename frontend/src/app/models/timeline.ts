@@ -1,6 +1,7 @@
 export type TimelineSegment = {
   id: string;
   label: string;
+  subDescription?: string;
   depthStart: number;
   depthEnd: number;
   projectIds: string[];
