@@ -5,7 +5,7 @@
       "label": "Education",
       "subDescription": "Oregon State University graduate with applied computer science training and a data visualization focus.",
       "depthStart": 0,
-      "depthEnd": 250,
+      "depthEnd": 150,
       "projectIds": [],
       "segmentCardIds": ["card-projects"]
     },
@@ -13,8 +13,8 @@
       "id": "segment-career",
       "label": "Career",
       "subDescription": "Built dashboards, APIs, and data workflows across Intel, Cambia Health Solutions, and BaseSite.",
-      "depthStart": 251,
-      "depthEnd": 500,
+      "depthStart": 151,
+      "depthEnd": 570,
       "projectIds": [],
       "segmentCardIds": ["card-company-intel", "card-company-cambia", "card-company-basesite"]
     },
@@ -22,7 +22,7 @@
       "id": "segment-side-projects",
       "label": "Side Projects",
       "subDescription": "Public GitHub builds spanning mobile + backend systems, game-focused web tooling, and this cinematic portfolio tunnel.",
-      "depthStart": 751,
+      "depthStart": 571,
       "depthEnd": 1000,
       "projectIds": ["proj-binx", "proj-tarkle", "proj-scroller"],
       "segmentCardIds": ["card-side-binx", "card-side-tarkle", "card-side-scroller"]

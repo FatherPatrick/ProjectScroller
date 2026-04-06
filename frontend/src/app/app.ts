@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import type { Project, TimelineSegment, SubMilestone, SegmentCard } from './models/timeline';
 import { AppStateService } from './services/app-state.service';
 import { TimelineApiService } from './services/timeline-api.service';
@@ -85,7 +86,9 @@ export class App implements OnInit, OnDestroy {
 
   private readonly timelineApi = inject(TimelineApiService);
   private readonly zoomEngine = inject(ZoomEngineService);
+  private readonly sanitizer = inject(DomSanitizer);
   private readonly motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  private readonly resumeDocPath = '/PatrickParkResume2026.docx';
   private readonly onMotionChange = (event: MediaQueryListEvent) => {
     this.prefersReducedMotion.set(event.matches);
   };
@@ -101,6 +104,11 @@ export class App implements OnInit, OnDestroy {
   readonly loadError = signal<string | null>(null);
   readonly selectedProject = signal<Project | null>(null);
   readonly prefersReducedMotion = signal(this.motionQuery.matches);
+  readonly resumeDownloadUrl = this.resumeDocPath;
+  readonly resumeModalOpen = signal(false);
+  readonly resumeLoading = signal(false);
+  readonly resumeLoadError = signal<string | null>(null);
+  readonly resumeHtml = signal<SafeHtml | null>(null);
 
   readonly activeSegment = computed(() => {
     const id = this.state.activeSegmentId();
@@ -425,6 +433,37 @@ export class App implements OnInit, OnDestroy {
 
   closeProject(): void {
     this.selectedProject.set(null);
+  }
+
+  async openResumeViewer(): Promise<void> {
+    this.resumeModalOpen.set(true);
+
+    if (this.resumeHtml() || this.resumeLoading()) {
+      return;
+    }
+
+    this.resumeLoading.set(true);
+    this.resumeLoadError.set(null);
+
+    try {
+      const mammoth = await import('mammoth/mammoth.browser');
+      const response = await fetch(this.resumeDocPath, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`Unable to load resume: ${response.status}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      this.resumeHtml.set(this.sanitizer.bypassSecurityTrustHtml(result.value));
+    } catch {
+      this.resumeLoadError.set('Unable to render resume preview. Use Download Resume to open the file directly.');
+    } finally {
+      this.resumeLoading.set(false);
+    }
+  }
+
+  closeResumeViewer(): void {
+    this.resumeModalOpen.set(false);
   }
 
   onTunnelSlideClick(slide: AllSlide): void {

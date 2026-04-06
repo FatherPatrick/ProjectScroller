@@ -16,7 +16,14 @@
       </app-three-tunnel>
 
       <div class="stage-content">
-        <p class="kicker">ProjectScroller</p>
+        <div class="stage-heading-row">
+          <p class="kicker">Patrick Park's Portfolio</p>
+          <div class="stage-links" aria-label="Profile links">
+            <button type="button" class="stage-link" (click)="openResumeViewer()">Resume</button>
+            <a class="stage-link" href="https://github.com/FatherPatrick" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a class="stage-link" href="https://linkedin.com/in/patty-park/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </div>
+        </div>
         @if (activeSegment(); as segment) {
           <h1 class="segment-heading">{{ segment.label }}</h1>
         } @else {
@@ -157,4 +164,27 @@
       <span class="keyboard-hint" aria-hidden="true">scroll to zoom | slides pass in 3D | ← → jump | +/- fine tune</span>
     }
   </nav>
+
+  @if (resumeModalOpen()) {
+    <div class="resume-modal-backdrop" (click)="closeResumeViewer()">
+      <section class="resume-modal" role="dialog" aria-modal="true" aria-label="Resume preview" (click)="$event.stopPropagation()">
+        <header class="resume-modal-header">
+          <h2 class="resume-modal-title">Resume Preview</h2>
+          <div class="resume-modal-actions">
+            <a class="resume-modal-link" [href]="resumeDownloadUrl" target="_blank" rel="noopener noreferrer">Download Resume</a>
+            <button type="button" class="resume-modal-close" (click)="closeResumeViewer()">Close</button>
+          </div>
+        </header>
+        <div class="resume-modal-content">
+          @if (resumeLoading()) {
+            <p>Loading resume preview...</p>
+          } @else if (resumeLoadError()) {
+            <p>{{ resumeLoadError() }}</p>
+          } @else {
+            <article class="resume-doc" [innerHTML]="resumeHtml()"></article>
+          }
+        </div>
+      </section>
+    </div>
+  }
 </main>
