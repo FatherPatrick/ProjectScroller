@@ -33,7 +33,7 @@
       "id": "card-projects",
       "segmentId": "segment-school",
       "title": "Oregon State University - BS Applied Computer Science",
-      "description": "Coursework emphasized software engineering, data science, and visualization. Also completed Intel System Administrator training.",
+      "description": "Computer science degree focused on software engineering, data science, and visualization.",
       "depthStart": 28,
       "depthEnd": 88,
       "projectIds": ["proj-capstone"]
@@ -42,7 +42,7 @@
       "id": "card-company-intel",
       "segmentId": "segment-career",
       "title": "Facilities Engineer Intern at Intel",
-      "description": "Automated backend reporting with Python and SQL across multiple databases, built Power BI dashboards, and improved engineer efficiency through data workflow automation.",
+      "description": "Automated backend reporting and built Power BI dashboards to improve engineer efficiency across multiple databases.",
       "depthStart": 251,
       "depthEnd": 313,
       "projectIds": ["intel-dashboards", "intel-community-of-practice"]
@@ -51,7 +51,7 @@
       "id": "card-company-cambia",
       "segmentId": "segment-career",
       "title": "Mobile Application Developer Intern at Cambia Health Solutions",
-      "description": "Developed user stories and iterative UI/UX prototypes for the flagship Regence app, supported testing and code quality, and helped reduce technical debt.",
+      "description": "Developed UI/UX prototypes and supported testing for the flagship Regence app while reducing technical debt.",
       "depthStart": 344,
       "depthEnd": 412,
       "projectIds": ["cambia-development", "cambia-regulations"]
@@ -60,7 +60,7 @@
       "id": "card-company-basesite",
       "segmentId": "segment-career",
       "title": "Data Scientist at BaseSite",
-      "description": "Designed C#/MSSQL backend processes and Power BI reporting for semiconductor operations, supported API integrations, and maintained high-impact dashboards for large user groups.",
+      "description": "Designed C#/MSSQL backend processes and maintained Power BI dashboards for semiconductor operations at scale.",
       "depthStart": 443,
       "depthEnd": 500,
       "projectIds": ["basesite-support", "basesite-lspx", "basesite-npm"]
@@ -69,7 +69,7 @@
       "id": "card-side-binx",
       "segmentId": "segment-side-projects",
       "title": "projectBinx",
-      "description": "Anonymous poll-first social app built as a React Native + Node/Postgres monorepo with auth, feed interactions, and API documentation.",
+      "description": "Poll-first social app monorepo with React Native mobile, Node/Express backend, and PostgreSQL data layer.",
       "depthStart": 751,
       "depthEnd": 833,
       "projectIds": ["proj-binx"]
@@ -78,7 +78,7 @@
       "id": "card-side-tarkle",
       "segmentId": "segment-side-projects",
       "title": "Tarkle",
-      "description": "Interactive Tarkov-focused React/Vite platform with modular game logic, GraphQL data integration, and serverless contact workflows.",
+      "description": "Tarkov-themed platform built with React, Vite, and GraphQL featuring game logic tools and content pages.",
       "depthStart": 834,
       "depthEnd": 916,
       "projectIds": ["proj-tarkle"]
@@ -87,7 +87,7 @@
       "id": "card-side-scroller",
       "segmentId": "segment-side-projects",
       "title": "ProjectScroller",
-      "description": "Cinematic scroll-to-zoom portfolio experience with depth-based navigation, timeline storytelling, and accessibility-first interactions.",
+      "description": "Depth-based portfolio with scroll-to-zoom navigation, timeline storytelling, and accessibility-first design.",
       "depthStart": 917,
       "depthEnd": 1000,
       "projectIds": ["proj-scroller"]
@@ -278,6 +278,104 @@
         }
       ],
       "timelineWeight": 5
+    },
+    {
+      "id": "intel-dashboards",
+      "slug": "intel-dashboards",
+      "title": "Intel Reporting Dashboards",
+      "shortDescription": "Data warehouse and reporting automation for facility operations.",
+      "longDescription": "Built Python and SQL backend processes automating facility data collection and transformation across multiple databases, delivering real-time Power BI dashboards to engineering teams.",
+      "startDate": "2020-06-01",
+      "endDate": "2020-12-15",
+      "technologies": ["Python", "SQL", "Power BI"],
+      "tags": ["Career", "Dashboard"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 3
+    },
+    {
+      "id": "intel-community-of-practice",
+      "slug": "intel-cop",
+      "title": "Intel Community of Practice Portal",
+      "shortDescription": "Internal knowledge sharing and collaboration portal.",
+      "longDescription": "Developed knowledge sharing platform for engineering community, including documentation management and collaborative workflow support.",
+      "startDate": "2020-09-01",
+      "endDate": "2020-12-15",
+      "technologies": ["Python", "SQL"],
+      "tags": ["Career", "Internal Tool"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 2
+    },
+    {
+      "id": "cambia-development",
+      "slug": "cambia-development",
+      "title": "Regence App Development",
+      "shortDescription": "Mobile application UI/UX development and prototyping.",
+      "longDescription": "Developed user stories and iterative UI/UX prototypes for the flagship Regence health app, supporting mobile-first design for healthcare consumers.",
+      "startDate": "2021-07-01",
+      "endDate": "2022-01-31",
+      "technologies": ["Swift", "Kotlin", "Figma", "XCode"],
+      "tags": ["Career", "Mobile"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 4
+    },
+    {
+      "id": "cambia-regulations",
+      "slug": "cambia-regulations",
+      "title": "Healthcare Compliance Testing",
+      "shortDescription": "QA and regulatory compliance support for health app.",
+      "longDescription": "Supported comprehensive testing and code quality improvements ensuring HIPAA compliance and regulatory adherence across the Regence platform.",
+      "startDate": "2021-09-01",
+      "endDate": "2022-01-31",
+      "technologies": ["Swift", "Kotlin", "TestFlight"],
+      "tags": ["Career", "QA"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 2
+    },
+    {
+      "id": "basesite-support",
+      "slug": "basesite-support",
+      "title": "BaseSite Operations Support",
+      "shortDescription": "Operational support and data infrastructure for semiconductor manufacturing.",
+      "longDescription": "Designed and maintained C# backend services and MSSQL data pipelines supporting real-time operations dashboards and API integrations for semiconductor facility management.",
+      "startDate": "2022-02-01",
+      "endDate": "2023-06-30",
+      "technologies": ["C#", "MSSQL", ".NET", "Azure"],
+      "tags": ["Career", "Backend"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 3
+    },
+    {
+      "id": "basesite-lspx",
+      "slug": "basesite-lspx",
+      "title": "LSPX Analytics Platform",
+      "shortDescription": "Power BI reporting and visualization for manufacturing analytics.",
+      "longDescription": "Developed comprehensive Power BI reporting suite enabling semiconductor operations team visibility into production metrics, yield analysis, and equipment performance tracking.",
+      "startDate": "2022-03-01",
+      "endDate": "2023-06-30",
+      "technologies": ["Power BI", "DAX", "MSSQL"],
+      "tags": ["Career", "Dashboard"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 3
+    },
+    {
+      "id": "basesite-npm",
+      "slug": "basesite-npm",
+      "title": "NPM Package Development",
+      "shortDescription": "Shared utilities library for internal services.",
+      "longDescription": "Published internal npm packages encapsulating reusable C# integration utilities and data transformation logic across multiple BaseSize backend services.",
+      "startDate": "2022-08-01",
+      "endDate": "2023-06-30",
+      "technologies": ["C#", "Node.js", "npm"],
+      "tags": ["Career", "Library"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 2
     }
   ]
 }

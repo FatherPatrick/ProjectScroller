@@ -494,6 +494,14 @@ export class App implements OnInit, OnDestroy {
     return activeList.length > 0 ? activeList[0] : null;
   }
 
+  getTechStackForSegmentCard(projects: Project[]): string[] {
+    const techSet = new Set<string>();
+    projects.forEach(project => {
+      project.technologies.forEach(tech => techSet.add(tech));
+    });
+    return Array.from(techSet).sort();
+  }
+
   private scrollToProjectsPanel(): void {
     const element = this.projectsPanelRef?.nativeElement;
     if (!element) {

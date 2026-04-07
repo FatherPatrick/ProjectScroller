@@ -30,10 +30,14 @@ export class InputNormalizerService {
     this.ngZone.runOutsideAngular(() => {
       // Wheel event listener
       document.addEventListener('wheel', (event: WheelEvent) => {
-        event.preventDefault();
-        // Normalize wheel delta: positive = scroll up (zoom in), negative = scroll down (zoom out)
-        const delta = -event.deltaY * this.WHEEL_DELTA_SCALE;
-        this.wheelDelta$.next(delta);
+        // Only intercept scroll over the tunnel stage; allow normal scroll outside
+        const tunnelStage = document.querySelector('.tunnel-stage');
+        if (tunnelStage && tunnelStage.contains(event.target as Node)) {
+          event.preventDefault();
+          // Normalize wheel delta: positive = scroll up (zoom in), negative = scroll down (zoom out)
+          const delta = -event.deltaY * this.WHEEL_DELTA_SCALE;
+          this.wheelDelta$.next(delta);
+        }
       }, { passive: false });
 
       // Touch events for pinch zoom

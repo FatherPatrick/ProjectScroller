@@ -88,6 +88,16 @@
                 <div class="segment-card-marker"></div>
                 <h3 class="tunnel-slide-card-title">{{ slide.card.title }}</h3>
                 <p class="tunnel-slide-card-desc">{{ slide.card.description }}</p>
+                @if (getTechStackForSegmentCard(slide.projects).length > 0) {
+                  <div class="tunnel-slide-card-tech-stack">
+                    <span class="tunnel-slide-card-tech-label">Tech Stack</span>
+                    <div class="tunnel-slide-card-tech-list">
+                      @for (tech of getTechStackForSegmentCard(slide.projects); track tech) {
+                        <span class="tunnel-slide-card-tech-tag">{{ tech }}</span>
+                      }
+                    </div>
+                  </div>
+                }
                 @if (slide.projects.length > 0) {
                   <div class="tunnel-slide-card-projects">
                     @for (project of slide.projects; track project.id) {

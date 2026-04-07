@@ -769,7 +769,7 @@
 
 .tunnel-slide-surface-card {
 	position: relative;
-	padding: 1.05rem 1.25rem;
+	padding: 1.4rem 1.5rem;
 	border-radius: 18px;
 	border: 1px solid rgba(122, 240, 255, 0.22);
 	background:
@@ -806,21 +806,54 @@
 }
 
 .tunnel-slide-card-desc {
-	margin: 0.25rem 0 0.6rem;
+	margin: 0.25rem 0 0.8rem;
 	font-size: 0.82rem;
 	line-height: 1.5;
 	color: var(--text-dim);
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+}
+
+.tunnel-slide-card-tech-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	margin: 0.9rem 0;
+}
+
+.tunnel-slide-card-tech-label {
+	font-size: 0.68rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: rgba(122, 240, 255, 0.7);
+}
+
+.tunnel-slide-card-tech-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+}
+
+.tunnel-slide-card-tech-tag {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.3rem 0.65rem;
+	border-radius: 999px;
+	border: 1px solid rgba(99, 255, 224, 0.35);
+	background: rgba(99, 255, 224, 0.08);
+	font-size: 0.7rem;
+	color: rgba(99, 255, 224, 0.85);
+	white-space: nowrap;
 }
 
 .tunnel-slide-card-projects {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.35rem;
-	margin-top: 0.7rem;
+	margin-top: 0.8rem;
 }
 
 .tunnel-slide-card-project-tag {
