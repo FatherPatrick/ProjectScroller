@@ -1,20 +1,11 @@
 {
   "timelineSegments": [
     {
-      "id": "segment-school",
-      "label": "Education",
-      "subDescription": "Oregon State University graduate with applied computer science training and a data visualization focus.",
-      "depthStart": 0,
-      "depthEnd": 150,
-      "projectIds": [],
-      "segmentCardIds": ["card-projects"]
-    },
-    {
       "id": "segment-career",
       "label": "Career",
       "subDescription": "Built dashboards, APIs, and data workflows across Intel, Cambia Health Solutions, and BaseSite.",
-      "depthStart": 151,
-      "depthEnd": 570,
+      "depthStart": 25,
+      "depthEnd": 443,
       "projectIds": [],
       "segmentCardIds": ["card-company-intel", "card-company-cambia", "card-company-basesite"]
     },
@@ -22,10 +13,19 @@
       "id": "segment-side-projects",
       "label": "Side Projects",
       "subDescription": "Public GitHub builds spanning mobile + backend systems, game-focused web tooling, and this cinematic portfolio tunnel.",
-      "depthStart": 571,
-      "depthEnd": 1000,
+      "depthStart": 444,
+      "depthEnd": 873,
       "projectIds": ["proj-binx", "proj-tarkle", "proj-scroller"],
       "segmentCardIds": ["card-side-binx", "card-side-tarkle", "card-side-scroller"]
+    },
+    {
+      "id": "segment-school",
+      "label": "Education",
+      "subDescription": "Oregon State University graduate with applied computer science training and a data visualization focus.",
+      "depthStart": 900,
+      "depthEnd": 999,
+      "projectIds": [],
+      "segmentCardIds": ["card-projects"]
     }
   ],
   "segmentCards": [
@@ -34,8 +34,8 @@
       "segmentId": "segment-school",
       "title": "Oregon State University - BS Applied Computer Science",
       "description": "Computer science degree focused on software engineering, data science, and visualization.",
-      "depthStart": 28,
-      "depthEnd": 88,
+      "depthStart": 900,
+      "depthEnd": 999,
       "projectIds": ["proj-capstone"]
     },
     {
@@ -43,8 +43,8 @@
       "segmentId": "segment-career",
       "title": "Facilities Engineer Intern at Intel",
       "description": "Automated backend reporting and built Power BI dashboards to improve engineer efficiency across multiple databases.",
-      "depthStart": 251,
-      "depthEnd": 313,
+      "depthStart": 105,
+      "depthEnd": 187,
       "projectIds": ["intel-dashboards", "intel-community-of-practice"]
     },
     {
@@ -52,8 +52,8 @@
       "segmentId": "segment-career",
       "title": "Mobile Application Developer Intern at Cambia Health Solutions",
       "description": "Developed UI/UX prototypes and supported testing for the flagship Regence app while reducing technical debt.",
-      "depthStart": 344,
-      "depthEnd": 412,
+      "depthStart": 208,
+      "depthEnd": 286,
       "projectIds": ["cambia-development", "cambia-regulations"]
     },
     {
@@ -61,8 +61,8 @@
       "segmentId": "segment-career",
       "title": "Data Scientist at BaseSite",
       "description": "Designed C#/MSSQL backend processes and maintained Power BI dashboards for semiconductor operations at scale.",
-      "depthStart": 443,
-      "depthEnd": 500,
+      "depthStart": 317,
+      "depthEnd": 374,
       "projectIds": ["basesite-support", "basesite-lspx", "basesite-npm"]
     },
     {
@@ -70,8 +70,8 @@
       "segmentId": "segment-side-projects",
       "title": "projectBinx",
       "description": "Poll-first social app monorepo with React Native mobile, Node/Express backend, and PostgreSQL data layer.",
-      "depthStart": 751,
-      "depthEnd": 833,
+      "depthStart": 524,
+      "depthEnd": 706,
       "projectIds": ["proj-binx"]
     },
     {
@@ -79,8 +79,8 @@
       "segmentId": "segment-side-projects",
       "title": "Tarkle",
       "description": "Tarkov-themed platform built with React, Vite, and GraphQL featuring game logic tools and content pages.",
-      "depthStart": 834,
-      "depthEnd": 916,
+      "depthStart": 707,
+      "depthEnd": 789,
       "projectIds": ["proj-tarkle"]
     },
     {
@@ -88,8 +88,8 @@
       "segmentId": "segment-side-projects",
       "title": "ProjectScroller",
       "description": "Depth-based portfolio with scroll-to-zoom navigation, timeline storytelling, and accessibility-first design.",
-      "depthStart": 917,
-      "depthEnd": 1000,
+      "depthStart": 790,
+      "depthEnd": 873,
       "projectIds": ["proj-scroller"]
     }
   ],

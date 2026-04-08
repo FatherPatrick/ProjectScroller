@@ -25,6 +25,7 @@ type TunnelSlide = {
   projectPreviewTitles: string[];
   isSubmilestone: false;
   isSegmentCard: false;
+  isSegmentChoice: false;
   depth: number;
 };
 
@@ -42,6 +43,7 @@ type SegmentCardSlide = {
   transform: string;
   isSubmilestone: false;
   isSegmentCard: true;
+  isSegmentChoice: false;
   depth: number;
 };
 
@@ -59,10 +61,26 @@ type SubmilestoneSlide = {
   transform: string;
   isSubmilestone: true;
   isSegmentCard: false;
+  isSegmentChoice: false;
   depth: number;
 };
 
-type AllSlide = TunnelSlide | SegmentCardSlide | SubmilestoneSlide;
+type SegmentChoiceSlide = {
+  segment: TimelineSegment;
+  index: number;
+  globalIndex: number;
+  isVisible: boolean;
+  opacity: number;
+  zIndex: number;
+  blur: string;
+  transform: string;
+  isSubmilestone: false;
+  isSegmentCard: false;
+  isSegmentChoice: true;
+  depth: number;
+};
+
+type AllSlide = TunnelSlide | SegmentCardSlide | SubmilestoneSlide | SegmentChoiceSlide;
 
 @Component({
   selector: 'app-root',
@@ -172,6 +190,12 @@ export class App implements OnInit, OnDestroy {
       allSlides.push(mainSlide);
       globalIndex++;
 
+      // Add centered choice card just before the segment's main slide
+      const choiceDepth = Math.max(0, segment.depthStart - 25);
+      const choiceSlide = this.calculateChoiceSlide(segment, globalIndex, choiceDepth, currentDepth);
+      allSlides.push(choiceSlide);
+      globalIndex++;
+
       // Add segment card slides in depth order
       segmentCards.sort((a, b) => a.depthStart - b.depthStart);
       segmentCards.forEach((card, cardIndex) => {
@@ -233,7 +257,7 @@ export class App implements OnInit, OnDestroy {
       : 1;
     const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade);
     const scale = 0.72 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.36;
-    const blurAmount = Math.min(normalizedDistance * 3, 5.5);
+    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
     const side: 'left' | 'right' = index % 2 === 0 ? 'left' : 'right';
     const laneDirection = side === 'left' ? -1 : 1;
     const facingDirection = side === 'left' ? 1 : -1;
@@ -261,6 +285,7 @@ export class App implements OnInit, OnDestroy {
       projectPreviewTitles: projects.slice(0, 3).map(project => project.title),
       isSubmilestone: false,
       isSegmentCard: false,
+      isSegmentChoice: false,
       depth: depthCenter
     };
   }
@@ -284,7 +309,7 @@ export class App implements OnInit, OnDestroy {
       : 1;
     const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade) * 0.8;
     const scale = 0.6 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.3;
-    const blurAmount = Math.min(normalizedDistance * 3, 5.5);
+    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
     const laneDirection = side === 'left' ? -1 : 1;
     const facingDirection = side === 'left' ? 1 : -1;
     const baseLaneOffset = 220;
@@ -308,6 +333,7 @@ export class App implements OnInit, OnDestroy {
       transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
       isSubmilestone: false,
       isSegmentCard: true,
+      isSegmentChoice: false,
       depth
     };
   }
@@ -331,7 +357,7 @@ export class App implements OnInit, OnDestroy {
       : 1;
     const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade) * 0.7;
     const scale = 0.5 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.25;
-    const blurAmount = Math.min(normalizedDistance * 3, 5.5);
+    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
     const laneDirection = side === 'left' ? -1 : 1;
     const facingDirection = side === 'left' ? 1 : -1;
     const baseLaneOffset = 160;
@@ -356,6 +382,44 @@ export class App implements OnInit, OnDestroy {
       transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
       isSubmilestone: true,
       isSegmentCard: false,
+      isSegmentChoice: false,
+      depth
+    };
+  }
+
+  private calculateChoiceSlide(
+    segment: TimelineSegment,
+    index: number,
+    depth: number,
+    currentDepth: number
+  ): SegmentChoiceSlide {
+    const relativeDepth = depth - currentDepth;
+    const sceneRelativeDepth = relativeDepth * this.SCENE_DEPTH_MULTIPLIER;
+    const distance = Math.abs(sceneRelativeDepth);
+    const normalizedDistance = Math.min(distance / this.DEPTH_NORMALIZATION_RANGE, 1.8);
+    const passedViewer = sceneRelativeDepth < -this.DEPTH_FADE_START;
+    const viewerFade = passedViewer
+      ? Math.max(0, 1 - (Math.abs(sceneRelativeDepth) - this.DEPTH_FADE_START) / this.DEPTH_FADE_RANGE)
+      : 1;
+    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade);
+    const scale = 0.72 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.36;
+    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
+    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * this.DEPTH_VERTICAL_FACTOR));
+    const zOffset = -sceneRelativeDepth * this.DEPTH_Z_FACTOR;
+    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * this.DEPTH_ROTATE_X_FACTOR));
+
+    return {
+      segment,
+      index,
+      globalIndex: index,
+      isVisible: distance <= this.DEPTH_VISIBILITY_RANGE,
+      opacity,
+      zIndex: 6,
+      blur: `blur(${blurAmount.toFixed(2)}px)`,
+      transform: `translate3d(0, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
+      isSubmilestone: false,
+      isSegmentCard: false,
+      isSegmentChoice: true,
       depth
     };
   }
@@ -387,7 +451,7 @@ export class App implements OnInit, OnDestroy {
 
         if (initial) {
           this.state.setActiveSegment(initial.id);
-          this.state.setZoomDepth(initial.depthStart);
+          this.state.setZoomDepth(fromHash ? initial.depthStart : 0);
         }
 
         this.isLoading.set(false);
@@ -413,8 +477,9 @@ export class App implements OnInit, OnDestroy {
   jumpToSegment(segment: TimelineSegment): void {
     this.selectedProject.set(null);
     this.updateUrlHash(segment.id);
-    const jumpDuration = this.getManualJumpDuration(this.state.zoomDepth(), segment.depthStart);
-    this.zoomEngine.jumpToDepth(segment.depthStart, jumpDuration);
+    const targetDepth = Math.max(0, segment.depthStart - 25);
+    const jumpDuration = this.getManualJumpDuration(this.state.zoomDepth(), targetDepth);
+    this.zoomEngine.jumpToDepth(targetDepth, jumpDuration);
   }
 
   private getManualJumpDuration(currentDepth: number, targetDepth: number): number {
@@ -477,6 +542,28 @@ export class App implements OnInit, OnDestroy {
     this.scrollToProjectsPanel();
   }
 
+  hasNextSegment(slide: AllSlide): boolean {
+    const segments = this.timelineSegments();
+    const currentIndex = segments.findIndex(s => s.id === slide.segment.id);
+    return currentIndex >= 0 && currentIndex < segments.length - 1;
+  }
+
+  jumpToNextSegmentFromCard(event: Event, slide: AllSlide): void {
+    event.stopPropagation();
+    const segments = this.timelineSegments();
+    const currentIndex = segments.findIndex(s => s.id === slide.segment.id);
+    const next = segments[currentIndex + 1];
+    if (next) {
+      this.jumpToSegment(next);
+    }
+  }
+
+  scrollToProjectsFromCard(event: Event, slide: AllSlide): void {
+    event.stopPropagation();
+    this.state.setActiveSegment(slide.segment.id);
+    this.scrollToProjectsPanel();
+  }
+
   private resolveSlideProject(slide: AllSlide): Project | null {
     if (slide.isSubmilestone) {
       return slide.project;
@@ -486,7 +573,7 @@ export class App implements OnInit, OnDestroy {
       return slide.projects[0];
     }
 
-    if (!slide.isSegmentCard && !slide.isSubmilestone && slide.projects.length > 0) {
+    if (!slide.isSegmentCard && !slide.isSubmilestone && !slide.isSegmentChoice && slide.projects.length > 0) {
       return slide.projects[0];
     }
 

@@ -41,7 +41,21 @@
 
       <div class="tunnel-slides" aria-hidden="true">
         @for (slide of tunnelSlides(); track slide.globalIndex || slide.index) {
-          @if (!slide.isSubmilestone && !slide.isSegmentCard) {
+          @if (slide.isSegmentChoice) {
+            <div
+              class="tunnel-choice-card"
+              [class.tunnel-choice-card-visible]="slide.isVisible"
+              [style.opacity]="slide.opacity"
+              [style.transform]="slide.transform"
+              [style.filter]="slide.blur"
+              [style.z-index]="slide.zIndex">
+              <div class="tunnel-choice-surface">
+                <p class="tunnel-choice-label">You've entered</p>
+                <h3 class="tunnel-choice-title">{{ slide.segment.label }}</h3>
+                <p class="tunnel-choice-hint">Continue scrolling for a quick overview.<br>Scroll to the bottom of the page to see in-depth projects.</p>
+              </div>
+            </div>
+          } @else if (!slide.isSubmilestone && !slide.isSegmentCard) {
             <article
               class="tunnel-slide"
               [class.tunnel-slide-left]="slide.side === 'left'"
