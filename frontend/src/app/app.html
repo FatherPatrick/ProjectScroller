@@ -152,7 +152,7 @@
           {{ activeSegment()?.label }} Projects
           <span class="projects-count">{{ activeProjects().length }}</span>
         </h2>
-        <div class="project-cards">
+        <div #projectCardsScroller class="project-cards">
           @for (group of activeProjectGroups(); track group.id) {
             <section class="project-group" [attr.aria-label]="group.title">
               <header class="project-group-header">

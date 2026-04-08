@@ -2,11 +2,19 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	border-left: 1px solid rgba(94, 255, 199, 0.2);
-	background: rgba(3, 10, 24, 0.88);
-	backdrop-filter: blur(12px);
+	border-left: 0;
+	background: transparent;
+	backdrop-filter: none;
 	overflow-y: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
 	animation: slide-in 0.25s ease-out;
+
+	&::-webkit-scrollbar {
+		display: none;
+		width: 0;
+		height: 0;
+	}
 }
 
 @keyframes slide-in {

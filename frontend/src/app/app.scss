@@ -7,6 +7,7 @@
 	position: relative;
 	min-height: 100dvh;
 	padding: 2.5rem 2rem 7rem;
+	padding-bottom: 0 !important;
 }
 
 .sr-only {
@@ -940,11 +941,13 @@
 	border: 1px solid rgba(94, 255, 199, 0.15);
 	border-radius: 20px;
 	overflow: hidden;
-	margin-bottom: 7rem;
+	margin-bottom: 5.2rem;
 	animation: fade-up 0.3s ease-out;
 
 	&.projects-panel-split {
 		grid-template-columns: minmax(0, 1fr) 380px;
+		align-items: start;
+		overflow: visible;
 	}
 }
 
@@ -952,7 +955,20 @@
 	padding: 1.4rem 1.5rem;
 	background: rgba(4, 12, 26, 0.72);
 	backdrop-filter: blur(8px);
-	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.projects-panel-split > app-project-detail {
+	display: block;
+	position: sticky;
+	top: .85rem;
+	align-self: start;
+	height: 100vh;
+	overflow: visible;
+	background: rgba(3, 10, 24, 0.88);
+	border-left: 1px solid rgba(94, 255, 199, 0.2);
+	backdrop-filter: blur(12px);
 }
 
 .mini-timeline {
@@ -1060,6 +1076,7 @@
 	letter-spacing: 0.11em;
 	text-transform: uppercase;
 	color: var(--accent-soft);
+	flex-shrink: 0;
 }
 
 .projects-count {
@@ -1086,7 +1103,6 @@
 	flex-direction: column;
 	gap: 0.75rem;
 	padding: 0.95rem;
-	border: 1px solid rgba(94, 255, 199, 0.12);
 	border-radius: 20px;
 	background:
 		linear-gradient(180deg, rgba(94, 255, 199, 0.07), rgba(8, 18, 25, 0.16)),
@@ -1175,14 +1191,25 @@
 	}
 
 	.projects-panel {
-		margin-bottom: 6.8rem;
+		margin-bottom: 5.8rem;
 
 		&.projects-panel-split {
 			grid-template-columns: 1fr;
+			height: auto;
 		}
 	}
 
 	.projects-list {
+		overflow: visible;
+	}
+
+	.projects-list {
 		padding: 1rem;
+	}
+
+	.projects-panel-split > app-project-detail {
+		position: static;
+		height: auto;
+		max-height: none;
 	}
 }

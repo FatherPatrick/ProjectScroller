@@ -121,6 +121,9 @@ export class App implements OnInit, OnDestroy {
   @ViewChild('projectsPanel')
   private projectsPanelRef?: ElementRef<HTMLElement>;
 
+  @ViewChild('projectCardsScroller')
+  private projectCardsScrollerRef?: ElementRef<HTMLElement>;
+
   readonly state = inject(AppStateService);
   readonly timelineSegments = signal<TimelineSegment[]>([]);
   readonly allProjects = signal<Project[]>([]);
@@ -556,9 +559,18 @@ export class App implements OnInit, OnDestroy {
   }
 
   openProject(project: Project): void {
+    const scroller = this.projectCardsScrollerRef?.nativeElement;
+    const scrollTop = scroller?.scrollTop ?? 0;
+
     this.selectedProject.set(
       this.selectedProject()?.id === project.id ? null : project
     );
+
+    requestAnimationFrame(() => {
+      if (scroller) {
+        scroller.scrollTop = scrollTop;
+      }
+    });
   }
 
   closeProject(): void {
