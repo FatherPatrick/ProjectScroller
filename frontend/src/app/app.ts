@@ -82,6 +82,13 @@ type SegmentChoiceSlide = {
 
 type AllSlide = TunnelSlide | SegmentCardSlide | SubmilestoneSlide | SegmentChoiceSlide;
 
+type ActiveProjectGroup = {
+  id: string;
+  label: string;
+  title: string;
+  projects: Project[];
+};
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
@@ -141,6 +148,50 @@ export class App implements OnInit, OnDestroy {
       .flatMap(card => card.projectIds ?? []);
     const relatedIds = new Set<string>([...segment.projectIds, ...segmentCardProjectIds]);
     return this.allProjects().filter(project => relatedIds.has(project.id));
+  });
+
+  readonly activeProjectGroups = computed<ActiveProjectGroup[]>(() => {
+    const segment = this.activeSegment();
+    if (!segment) return [];
+
+    const projectsById = new Map(this.allProjects().map(project => [project.id, project]));
+    const groups: ActiveProjectGroup[] = [];
+    const usedProjectIds = new Set<string>();
+
+    const segmentCards = this.allSegmentCards()
+      .filter(card => card.segmentId === segment.id)
+      .sort((left, right) => left.depthStart - right.depthStart);
+
+    segmentCards.forEach(card => {
+      const projects = card.projectIds
+        .map(projectId => projectsById.get(projectId))
+        .filter((project): project is Project => !!project);
+
+      projects.forEach(project => usedProjectIds.add(project.id));
+
+      if (projects.length === 0) {
+        return;
+      }
+
+      groups.push({
+        id: card.id,
+        label: this.getSegmentCardCompanyLabel(card.title),
+        title: card.title,
+        projects
+      });
+    });
+
+    const ungroupedProjects = this.activeProjects().filter(project => !usedProjectIds.has(project.id));
+    if (ungroupedProjects.length > 0) {
+      groups.push({
+        id: `${segment.id}-other-projects`,
+        label: segment.label,
+        title: `${segment.label} Projects`,
+        projects: ungroupedProjects
+      });
+    }
+
+    return groups;
   });
 
   readonly activeSegmentIndex = computed(() => {
@@ -288,6 +339,20 @@ export class App implements OnInit, OnDestroy {
       isSegmentChoice: false,
       depth: depthCenter
     };
+  }
+
+  private getSegmentCardCompanyLabel(title: string): string {
+    const atIndex = title.lastIndexOf(' at ');
+    if (atIndex >= 0) {
+      return title.slice(atIndex + 4).trim();
+    }
+
+    const separatorIndex = title.indexOf(' - ');
+    if (separatorIndex >= 0) {
+      return title.slice(0, separatorIndex).trim();
+    }
+
+    return title.trim();
   }
 
   private calculateSegmentCardSlide(

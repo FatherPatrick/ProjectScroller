@@ -60,10 +60,10 @@
       "id": "card-company-basesite",
       "segmentId": "segment-career",
       "title": "Data Scientist at BaseSite",
-      "description": "Designed C#/MSSQL backend processes and maintained Power BI dashboards for semiconductor operations at scale.",
+      "description": "Own C#/MSSQL data pipelines, Power BI reporting, REST API integrations, and large-scale application support for a semiconductor machine installation platform.",
       "depthStart": 317,
       "depthEnd": 374,
-      "projectIds": ["basesite-support", "basesite-lspx", "basesite-npm"]
+      "projectIds": ["basesite-support", "basesite-lspx", "basesite-application-support", "basesite-process-improvement"]
     },
     {
       "id": "card-side-binx",
@@ -191,6 +191,10 @@
       "media": [],
       "links": [
         {
+          "label": "Tarkle Home Page",
+          "url": "https://tarkovle.vercel.app/"
+        },
+        {
           "label": "GitHub Repository",
           "url": "https://github.com/FatherPatrick/Tarkle"
         }
@@ -208,6 +212,10 @@
       "tags": ["Side Projects", "Portfolio", "Frontend"],
       "media": [],
       "links": [
+        {
+          "label": "My Portfolio Home Page",
+          "url": "https://patrickparkportfolio.vercel.app/"
+        },
         {
           "label": "GitHub Repository",
           "url": "https://github.com/FatherPatrick/ProjectScroller"
@@ -296,12 +304,11 @@
     {
       "id": "basesite-support",
       "slug": "basesite-support",
-      "title": "BaseSite Operations Support",
-      "shortDescription": "Operational support and data infrastructure for semiconductor manufacturing.",
-      "longDescription": "Designed and maintained C# backend services and MSSQL data pipelines supporting real-time operations dashboards and API integrations for semiconductor facility management.",
-      "startDate": "2022-02-01",
-      "endDate": "2023-06-30",
-      "technologies": ["C#", "MSSQL", ".NET", "Azure"],
+      "title": "Manufacturing Data Pipelines & Platform Support",
+      "shortDescription": "C#/MSSQL backend processes and REST API integrations for a machine installation management platform used across semiconductor fabs.",
+      "longDescription": "Designed and maintained backend processes that feed real-time manufacturing data into dashboards using C# and MSSQL. Supported REST API integrations and backend logic to automate report generation, strengthen data pipelines, and keep a machine installation management platform reliable for a global semiconductor customer base. Also partnered with engineers and business analysts to translate operational requirements into product objectives and platform improvements.",
+      "startDate": "2024-02-01",
+      "technologies": ["C#", "MSSQL", "REST API", ".NET"],
       "tags": ["Career", "Backend"],
       "media": [],
       "links": [],
@@ -309,28 +316,39 @@
     },
     {
       "id": "basesite-lspx",
-      "slug": "basesite-lspx",
-      "title": "LSPX Analytics Platform",
-      "shortDescription": "Power BI reporting and visualization for manufacturing analytics.",
-      "longDescription": "Developed comprehensive Power BI reporting suite enabling semiconductor operations team visibility into production metrics, yield analysis, and equipment performance tracking.",
-      "startDate": "2022-03-01",
-      "endDate": "2023-06-30",
-      "technologies": ["Power BI", "DAX", "MSSQL"],
+      "slug": "basesite-powerbi-reporting",
+      "title": "Power BI Reporting Ownership",
+      "shortDescription": "Sole maintainer of Power BI reports supporting business decisions and manufacturing visibility.",
+      "longDescription": "Create and refine Power BI reports that support business decision-making across the platform, ensuring accuracy, performance, and alignment with evolving business needs. Analyze key performance data for customers, manage complex datasets for workload planning, and incorporate Primavera P6 scheduling context into reporting so technical and non-technical stakeholders can act on the same operational picture.",
+      "startDate": "2024-02-01",
+      "technologies": ["Power BI", "MSSQL", "Primavera P6", "Data Analysis"],
       "tags": ["Career", "Dashboard"],
       "media": [],
       "links": [],
       "timelineWeight": 3
     },
     {
-      "id": "basesite-npm",
-      "slug": "basesite-npm",
-      "title": "NPM Package Development",
-      "shortDescription": "Shared utilities library for internal services.",
-      "longDescription": "Published internal npm packages encapsulating reusable C# integration utilities and data transformation logic across multiple BaseSize backend services.",
-      "startDate": "2022-08-01",
-      "endDate": "2023-06-30",
-      "technologies": ["C#", "Node.js", "npm"],
-      "tags": ["Career", "Library"],
+      "id": "basesite-application-support",
+      "slug": "basesite-application-support",
+      "title": "Enterprise Application Support",
+      "shortDescription": "Provided frontline application support for more than 6,000 users while owning most of the support volume across the platform.",
+      "longDescription": "Single-handedly supported more than 6,000 users on BaseSite's machine installation management platform while handling 66% of all application support work. Partnered directly with engineers, business analysts, and non-technical users to resolve issues quickly, maintain platform stability, and keep operational workflows moving across a large semiconductor-facing organization.",
+      "startDate": "2024-02-01",
+      "technologies": ["Application Support", "Customer Support", "Cross-Functional Collaboration", "Power BI"],
+      "tags": ["Career", "Operations"],
+      "media": [],
+      "links": [],
+      "timelineWeight": 2
+    },
+    {
+      "id": "basesite-process-improvement",
+      "slug": "basesite-process-improvement",
+      "title": "Feature Maintenance & Process Improvement",
+      "shortDescription": "Established stronger practices for feature delivery and maintenance while sustaining high development output.",
+      "longDescription": "Established new practices for adding and maintaining features across the platform while maintaining a leading position in lines of code changed and overall development output. Helped improve the product's operability by making ongoing maintenance more consistent, aligning technical work with user needs, and strengthening the team's day-to-day delivery model.",
+      "startDate": "2024-02-01",
+      "technologies": ["C#", "Product Maintenance", "Process Improvement", "Cross-Functional Collaboration"],
+      "tags": ["Career", "Operations"],
       "media": [],
       "links": [],
       "timelineWeight": 2

@@ -1078,7 +1078,45 @@
 .project-cards {
 	display: flex;
 	flex-direction: column;
+	gap: 1rem;
+}
+
+.project-group {
+	display: flex;
+	flex-direction: column;
 	gap: 0.75rem;
+	padding: 0.95rem;
+	border: 1px solid rgba(94, 255, 199, 0.12);
+	border-radius: 20px;
+	background:
+		linear-gradient(180deg, rgba(94, 255, 199, 0.07), rgba(8, 18, 25, 0.16)),
+		rgba(4, 9, 14, 0.42);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.project-group-header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	padding-bottom: 0.7rem;
+	border-bottom: 1px solid rgba(94, 255, 199, 0.14);
+}
+
+.project-group-kicker {
+	margin: 0;
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
+
+.project-group-title {
+	margin: 0;
+	font-size: 0.98rem;
+	font-weight: 600;
+	line-height: 1.35;
+	color: var(--text);
 }
 
 .empty-projects {

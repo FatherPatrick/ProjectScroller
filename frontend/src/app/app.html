@@ -153,12 +153,21 @@
           <span class="projects-count">{{ activeProjects().length }}</span>
         </h2>
         <div class="project-cards">
-          @for (project of activeProjects(); track project.id) {
-            <app-project-card
-              [project]="project"
-              [selected]="selectedProject()?.id === project.id"
-              (select)="openProject($event)">
-            </app-project-card>
+          @for (group of activeProjectGroups(); track group.id) {
+            <section class="project-group" [attr.aria-label]="group.title">
+              <header class="project-group-header">
+                <p class="project-group-kicker">{{ group.label }}</p>
+                <h3 class="project-group-title">{{ group.title }}</h3>
+              </header>
+
+              @for (project of group.projects; track project.id) {
+                <app-project-card
+                  [project]="project"
+                  [selected]="selectedProject()?.id === project.id"
+                  (select)="openProject($event)">
+                </app-project-card>
+              }
+            </section>
           }
         </div>
       </div>
