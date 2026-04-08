@@ -33,7 +33,7 @@
       "id": "card-projects",
       "segmentId": "segment-school",
       "title": "Oregon State University - BS Applied Computer Science",
-      "description": "Computer science degree focused on software engineering, data science, and visualization.",
+      "description": "Capstone: A-Life — An educational artificial life game combining evolutionary simulation with an engaging gameplay experience.",
       "depthStart": 900,
       "depthEnd": 999,
       "projectIds": ["proj-capstone"]
@@ -41,8 +41,8 @@
     {
       "id": "card-company-intel",
       "segmentId": "segment-career",
-      "title": "Facilities Engineer Intern at Intel",
-      "description": "Automated backend reporting and built Power BI dashboards to improve engineer efficiency across multiple databases.",
+      "title": "MECOP Data Solutions Intern at Intel",
+      "description": "Built four Power BI dashboards for facility operations — covering electrical capacity, pump health, truck traffic, and water treatment — using Python ETL pipelines and SCADA/vendor data integrations.",
       "depthStart": 105,
       "depthEnd": 187,
       "projectIds": ["intel-dashboards", "intel-community-of-practice"]
@@ -50,8 +50,8 @@
     {
       "id": "card-company-cambia",
       "segmentId": "segment-career",
-      "title": "Mobile Application Developer Intern at Cambia Health Solutions",
-      "description": "Developed UI/UX prototypes and supported testing for the flagship Regence app while reducing technical debt.",
+      "title": "Software Engineer Intern at Cambia Health Solutions",
+      "description": "Built and shipped features in the Regence React Native app using TypeScript and Redux Toolkit, while authoring Jest unit tests and reducing codebase tech debt.",
       "depthStart": 208,
       "depthEnd": 286,
       "projectIds": ["cambia-development", "cambia-regulations"]
@@ -96,60 +96,28 @@
   "projects": [
     {
       "id": "proj-capstone",
-      "slug": "school-capstone-analytics",
-      "title": "School Capstone Analytics",
-      "shortDescription": "Built a data visualization capstone dashboard.",
-      "longDescription": "A team-led capstone focused on transforming raw survey data into actionable visual insights.",
+      "slug": "alife-capstone",
+      "title": "A-Life: Artificial Life Simulator",
+      "shortDescription": "Educational game teaching evolution through interactive artificial life simulation with day cycles, pathfinding, and biome exploration.",
+      "longDescription": "A team-led capstone project partner with William Pfiel, combining evolutionary biology education with engaging video game mechanics. The simulator features interactive biome worlds, autonomous creature behavior with pathfinding, dynamic day cycles, and event-driven systems. Designed to make AI and evolution concepts accessible while maintaining scientific rigor and gameplay fun.",
       "startDate": "2019-01-10",
       "endDate": "2019-05-12",
-      "technologies": ["Angular", "TypeScript", "D3"],
-      "tags": ["School", "Visualization"],
+      "technologies": ["Unity", "C#", "Game Development"],
+      "tags": ["School", "Capstone", "Game", "Simulation"],
       "media": [
         {
           "type": "image",
-          "url": "/assets/projects/capstone.png",
-          "alt": "Capstone dashboard screenshot"
+          "url": "https://lh3.googleusercontent.com/sitesv/APaQ0STyJTUtZIJJzHEAA_eqq6k-y2gH9MAKNLm7Cr79uNk_B9HAZwfGHYF62wKHjvPrkMada4LeEDLkqEH10HkU2ukVzsQoxr7pewpkg3Zy_uSGC9UMaXeYtA7cPzek_uE1VK3D-bu0UGj-_Szvo9C18chAFjvQFiUEaEWmMXXv1EGboGUF5XuYD0qdqCNB4sLNMYswSgjWC6MSom3decdUJEltRosf2oYtogXb=w1280",
+          "alt": "A-Life gameplay screenshot"
         }
       ],
       "links": [
         {
-          "label": "Case Study",
-          "url": "https://example.com/capstone"
+          "label": "Project Page",
+          "url": "https://sites.google.com/view/alifeproductpage"
         }
       ],
-      "timelineWeight": 3,
-      "submilestones": [
-        {
-          "id": "sub-capstone-1",
-          "title": "Requirements & Data Exploration",
-          "description": "Gathered requirements from stakeholders and analyzed the survey dataset structure.",
-          "date": "2019-01-15"
-        },
-        {
-          "id": "sub-capstone-2",
-          "title": "Component Architecture Design",
-          "description": "Built reusable Angular components and data pipeline for visualization.",
-          "date": "2019-02-10"
-        },
-        {
-          "id": "sub-capstone-3",
-          "title": "D3 Visualizations Prototype",
-          "description": "Developed interactive charts and graphs for key metrics.",
-          "date": "2019-03-15"
-        },
-        {
-          "id": "sub-capstone-4",
-          "title": "User Testing & Feedback",
-          "description": "Conducted user testing sessions and iterated on design based on feedback.",
-          "date": "2019-04-10"
-        },
-        {
-          "id": "sub-capstone-5",
-          "title": "Final Polish & Deployment",
-          "description": "Performance optimization, accessibility improvements, and production deployment.",
-          "date": "2019-05-05"
-        }
-      ]
+      "timelineWeight": 3
     },
     {
       "id": "proj-research-lab",
@@ -177,39 +145,7 @@
       "tags": ["Career", "Dashboard"],
       "media": [],
       "links": [],
-      "timelineWeight": 4,
-      "submilestones": [
-        {
-          "id": "sub-career-1",
-          "title": "Workflow Analysis & Documentation",
-          "description": "Interviewed teams to understand existing workflows and pain points.",
-          "date": "2020-07-15"
-        },
-        {
-          "id": "sub-career-2",
-          "title": "Backend API & Data Model",
-          "description": "Built C# REST APIs and database schema to support unified operations.",
-          "date": "2020-09-20"
-        },
-        {
-          "id": "sub-career-3",
-          "title": "Frontend Dashboard MVP",
-          "description": "Created initial dashboard with core workflow integrations.",
-          "date": "2020-11-30"
-        },
-        {
-          "id": "sub-career-4",
-          "title": "Testing & Performance Tuning",
-          "description": "Comprehensive testing and optimization for scale and reliability.",
-          "date": "2021-02-15"
-        },
-        {
-          "id": "sub-career-5",
-          "title": "Stakeholder Training & Rollout",
-          "description": "Trained teams and managed phased rollout across departments.",
-          "date": "2021-10-01"
-        }
-      ]
+      "timelineWeight": 4
     },
     {
       "id": "proj-role-ui-lead",
@@ -282,27 +218,38 @@
     {
       "id": "intel-dashboards",
       "slug": "intel-dashboards",
-      "title": "Intel Reporting Dashboards",
-      "shortDescription": "Data warehouse and reporting automation for facility operations.",
-      "longDescription": "Built Python and SQL backend processes automating facility data collection and transformation across multiple databases, delivering real-time Power BI dashboards to engineering teams.",
+      "title": "Intel Facilities Power BI Dashboards",
+      "shortDescription": "Four Power BI dashboards for facility operations: electrical capacity, pump health, truck traffic, and water treatment.",
+      "longDescription": "Designed and shipped four Power BI dashboards as a MECOP Data Solutions intern. The Electrical Capacity Report let RA SOs compare capacity vs. demand for electrical systems and panels (3hr/month efficiency gain). The Pump Health Monitoring dashboard automated oil and vibration data collection via macro and SCADA, created an Overall Pump Health Summary, and was proliferated to sites in Israel, Ireland, and New Mexico (saving ~3hr/wk per SO). The Truck Loading Heat Map combined a Security Guard data-collection app with real-time Power BI visualizations for site master planning. The Water Treatment Report transformed DEF pipe and vendor data into a structured report modeled on the Israel site format.",
       "startDate": "2020-06-01",
       "endDate": "2020-12-15",
-      "technologies": ["Python", "SQL", "Power BI"],
+      "technologies": ["Power BI", "Python", "SCADA", "SQL", "ETL"],
       "tags": ["Career", "Dashboard"],
-      "media": [],
+      "media": [
+        {
+          "type": "image",
+          "url": "/assets/projects/upwDashboard.png",
+          "alt": "Overall Pump Health Summary dashboard"
+        },
+        {
+          "type": "image",
+          "url": "/assets/projects/waterTreatmentDashboard.jpg",
+          "alt": "Water Treatment Report"
+        }
+      ],
       "links": [],
       "timelineWeight": 3
     },
     {
       "id": "intel-community-of-practice",
       "slug": "intel-cop",
-      "title": "Intel Community of Practice Portal",
-      "shortDescription": "Internal knowledge sharing and collaboration portal.",
-      "longDescription": "Developed knowledge sharing platform for engineering community, including documentation management and collaborative workflow support.",
+      "title": "Intel Python Automation & Other Engagements",
+      "shortDescription": "Python scripting, API integrations, and IAPM Subgroup BKMs DST support alongside the core dashboard work.",
+      "longDescription": "Contributed to additional engagements beyond the four main dashboards: wrote Python automation scripts and API integrations to support data pipelines, and participated in IAPM Subgroup BKMs DST activities. Also gained hands-on exposure to the Software Development Life Cycle in an enterprise environment, working through challenges like SCADA portal downtime, large heterogeneous datasets, and cross-site data discrepancies.",
       "startDate": "2020-09-01",
       "endDate": "2020-12-15",
-      "technologies": ["Python", "SQL"],
-      "tags": ["Career", "Internal Tool"],
+      "technologies": ["Python", "API", "Power BI"],
+      "tags": ["Career", "Automation"],
       "media": [],
       "links": [],
       "timelineWeight": 2
@@ -310,27 +257,38 @@
     {
       "id": "cambia-development",
       "slug": "cambia-development",
-      "title": "Regence App Development",
-      "shortDescription": "Mobile application UI/UX development and prototyping.",
-      "longDescription": "Developed user stories and iterative UI/UX prototypes for the flagship Regence health app, supporting mobile-first design for healthcare consumers.",
+      "title": "Regence App Feature Contributions",
+      "shortDescription": "Shipped user-facing features in the Regence React Native app using TypeScript and Redux.",
+      "longDescription": "Contributed to the flagship Regence React Native app by implementing key user-facing features: the My Account onboarding tutorial (sign-in, biometrics, contact info), claims submission flow updates, message center, and the Sexual Orientation and Gender Identity section. Also improved parity across web, mobile, Regence, and Asuris experiences and updated core app dependencies.",
       "startDate": "2021-07-01",
       "endDate": "2022-01-31",
-      "technologies": ["Swift", "Kotlin", "Figma", "XCode"],
+      "technologies": ["React Native", "TypeScript", "Redux"],
       "tags": ["Career", "Mobile"],
-      "media": [],
+      "media": [
+        {
+          "type": "image",
+          "url": "/assets/projects/cambiaIntro.png",
+          "alt": "Onboarding tutorial screens"
+        },
+        {
+          "type": "image",
+          "url": "/assets/projects/cambiaPersonalInfo.png",
+          "alt": "Message center and SOGI section"
+        }
+      ],
       "links": [],
       "timelineWeight": 4
     },
     {
       "id": "cambia-regulations",
       "slug": "cambia-regulations",
-      "title": "Healthcare Compliance Testing",
-      "shortDescription": "QA and regulatory compliance support for health app.",
-      "longDescription": "Supported comprehensive testing and code quality improvements ensuring HIPAA compliance and regulatory adherence across the Regence platform.",
+      "title": "Tech Debt Reduction & Unit Testing",
+      "shortDescription": "Refactored Redux to Redux Toolkit and authored Jest snapshot tests for the Regence codebase.",
+      "longDescription": "Reduced technical debt by migrating the Regence app from Redux to Redux Toolkit — eliminating boilerplate, improving readability, removing dead code, and improving overall architecture. Alongside the refactor, authored Jest unit and snapshot tests to reduce complexity, catch future defects, and improve team confidence in the codebase.",
       "startDate": "2021-09-01",
       "endDate": "2022-01-31",
-      "technologies": ["Swift", "Kotlin", "TestFlight"],
-      "tags": ["Career", "QA"],
+      "technologies": ["Redux Toolkit", "TypeScript", "Jest", "React Native"],
+      "tags": ["Career", "Testing"],
       "media": [],
       "links": [],
       "timelineWeight": 2

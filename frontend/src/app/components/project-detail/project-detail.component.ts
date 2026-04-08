@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type { Project } from '../../models/timeline';
 
@@ -29,6 +29,21 @@ import type { Project } from '../../models/timeline';
 
       <div class="detail-body">
         <p class="detail-long-desc">{{ project.longDescription }}</p>
+
+        @if (project.media && project.media.length > 0) {
+          <section class="detail-section">
+            <h3 class="detail-section-label">Images</h3>
+            <div class="detail-media-grid">
+              @for (item of project.media; track item.url) {
+                @if (item.type === 'image' && item.url) {
+                  <button type="button" class="detail-media-item" (click)="openLightbox(item.url, item.alt || project.title)" [attr.aria-label]="'View image: ' + (item.alt || project.title)">
+                    <img [src]="item.url" [alt]="item.alt || project.title" class="detail-media-img" loading="lazy" />
+                  </button>
+                }
+              }
+            </div>
+          </section>
+        }
 
         @if (project.submilestones && project.submilestones.length > 0) {
           <section class="detail-section">
@@ -79,10 +94,34 @@ import type { Project } from '../../models/timeline';
         }
       </div>
     </aside>
+
+    @if (lightboxUrl) {
+      <div class="lightbox-backdrop" (click)="closeLightbox()" role="dialog" aria-modal="true" [attr.aria-label]="lightboxAlt">
+        <button type="button" class="lightbox-close" (click)="closeLightbox()" aria-label="Close image">✕</button>
+        <img class="lightbox-img" [src]="lightboxUrl" [alt]="lightboxAlt" (click)="$event.stopPropagation()" />
+      </div>
+    }
   `,
   styleUrl: './project-detail.component.scss'
 })
 export class ProjectDetailComponent {
   @Input({ required: true }) project!: Project;
   @Output() close = new EventEmitter<void>();
+
+  lightboxUrl: string | null = null;
+  lightboxAlt: string = '';
+
+  openLightbox(url: string, alt: string): void {
+    this.lightboxUrl = url;
+    this.lightboxAlt = alt;
+  }
+
+  closeLightbox(): void {
+    this.lightboxUrl = null;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.lightboxUrl) this.closeLightbox();
+  }
 }
