@@ -30,16 +30,18 @@
           <h1 class="segment-heading">Exploring</h1>
         }
         <p class="subtitle">Scroll to zoom deeper into the tunnel. Each chapter rides toward you in 3D and slips past once you cross its threshold.</p>
+        <p></p>
+        <p class="subtitle">Click on card or scroll down to view project details including tech stack, images, dates, etc.</p>
         <p class="depth-readout" [class.jumping]="state.isJumping()">
           depth {{ state.zoomDepth() | number:'1.0-0' }}
           @if (activeSegment(); as segment) {
             <span>{{ getSegmentProgress(segment) }}% through {{ segment.label | lowercase }}</span>
           }
           @if (state.isJumping()) { <span class="jump-indicator">jumping…</span> }
+          @if (stageContentYear(); as stageYear) {
+            <span class="stage-content-year">{{ stageYear }}</span>
+          }
         </p>
-        @if (stageContentYear(); as stageYear) {
-          <span class="stage-content-year">{{ stageYear }}</span>
-        }
       </div>
 
       <div class="tunnel-slides" aria-hidden="true">

@@ -61,7 +61,7 @@
 	position: relative;
 	z-index: 6;
 	max-width: 38rem;
-	padding: 2rem 2rem 2.35rem;
+	padding: 2rem 2rem 1.35rem;
 	margin: 1.1rem;
 	border-radius: 22px;
 	background: linear-gradient(180deg, rgba(4, 12, 28, 0.6), rgba(4, 12, 28, 0.2));
@@ -72,7 +72,6 @@
 .stage-content-year {
 	position: absolute;
 	right: 1.2rem;
-	bottom: 0.9rem;
 	font-size: 0.7rem;
 	font-weight: 600;
 	letter-spacing: 0.08em;
