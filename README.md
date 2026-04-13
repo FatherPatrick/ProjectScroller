@@ -169,3 +169,7 @@ The project is structured for unified deployment (frontend + API) with Vercel. L
 
 - Foundation, zoom engine, tunnel visual system, navigation jumps, project cards/detail, and accessibility hardening are implemented.
 - Remaining work is focused on data persistence, production observability, and QA automation.
+
+## TODO
+
+- Add year in the top right card to give context of ordering

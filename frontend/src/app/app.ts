@@ -131,6 +131,8 @@ export class App implements OnInit, OnDestroy {
   readonly isLoading = signal(true);
   readonly loadError = signal<string | null>(null);
   readonly selectedProject = signal<Project | null>(null);
+  readonly lightboxUrl = signal<string | null>(null);
+  readonly lightboxAlt = signal<string>('');
   readonly prefersReducedMotion = signal(this.motionQuery.matches);
   readonly resumeDownloadUrl = this.resumeDocPath;
   readonly resumeModalOpen = signal(false);
@@ -575,6 +577,21 @@ export class App implements OnInit, OnDestroy {
 
   closeProject(): void {
     this.selectedProject.set(null);
+  }
+
+  openLightbox(event: { url: string; alt: string }): void {
+    this.lightboxUrl.set(event.url);
+    this.lightboxAlt.set(event.alt);
+  }
+
+  closeLightbox(): void {
+    this.lightboxUrl.set(null);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.lightboxUrl()) { this.closeLightbox(); return; }
+    if (this.resumeModalOpen()) { this.closeResumeViewer(); }
   }
 
   async openResumeViewer(): Promise<void> {

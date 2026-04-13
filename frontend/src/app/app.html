@@ -174,7 +174,8 @@
       @if (selectedProject(); as project) {
         <app-project-detail
           [project]="project"
-          (close)="closeProject()">
+          (close)="closeProject()"
+          (lightboxOpen)="openLightbox($event)">
         </app-project-detail>
       }
     </div>
@@ -197,6 +198,13 @@
       <span class="keyboard-hint" aria-hidden="true">scroll to zoom | slides pass in 3D | ← → jump | +/- fine tune</span>
     }
   </nav>
+
+  @if (lightboxUrl()) {
+    <div class="lightbox-backdrop" (click)="closeLightbox()" role="dialog" aria-modal="true" [attr.aria-label]="lightboxAlt()">
+      <button type="button" class="lightbox-close" (click)="closeLightbox()" aria-label="Close image">✕</button>
+      <img class="lightbox-img" [src]="lightboxUrl()" [alt]="lightboxAlt()" (click)="$event.stopPropagation()" />
+    </div>
+  }
 
   @if (resumeModalOpen()) {
     <div class="resume-modal-backdrop" (click)="closeResumeViewer()">
