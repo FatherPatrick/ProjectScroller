@@ -219,6 +219,52 @@ export class App implements OnInit, OnDestroy {
     return Math.max(0, Math.min(1, rawProgress));
   });
 
+  readonly stageContentYear = computed<string>(() => {
+    const currentYear = new Date().getFullYear();
+    const currentDepth = this.state.zoomDepth();
+    const projectsById = new Map(this.allProjects().map(project => [project.id, project]));
+
+    const cardMilestones = this.allSegmentCards()
+      .map(card => {
+        const startYears = card.projectIds
+          .map(projectId => projectsById.get(projectId))
+          .filter((project): project is Project => !!project)
+          .map(project => Number.parseInt(project.startDate.slice(0, 4), 10))
+          .filter(year => Number.isFinite(year));
+
+        if (startYears.length === 0) {
+          return null;
+        }
+
+        return {
+          depthStart: card.depthStart,
+          year: Math.min(...startYears)
+        };
+      })
+      .filter((milestone): milestone is { depthStart: number; year: number } => milestone !== null)
+      .sort((left, right) => left.depthStart - right.depthStart);
+
+    if (cardMilestones.length === 0) {
+      return String(currentYear);
+    }
+
+    const anchors = [{ depthStart: 0, year: currentYear }, ...cardMilestones];
+    const clampedDepth = Math.max(0, currentDepth);
+
+    for (let i = 0; i < anchors.length - 1; i++) {
+      const from = anchors[i];
+      const to = anchors[i + 1];
+      if (clampedDepth <= to.depthStart) {
+        const span = Math.max(1, to.depthStart - from.depthStart);
+        const progress = Math.max(0, Math.min(1, (clampedDepth - from.depthStart) / span));
+        const interpolatedYear = from.year + (to.year - from.year) * progress;
+        return String(Math.round(interpolatedYear));
+      }
+    }
+
+    return String(anchors[anchors.length - 1].year);
+  });
+
   readonly tunnelSlides = computed<AllSlide[]>(() => {
     const segments = this.timelineSegments();
     const cards = this.allSegmentCards();

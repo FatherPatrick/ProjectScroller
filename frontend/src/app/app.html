@@ -37,6 +37,9 @@
           }
           @if (state.isJumping()) { <span class="jump-indicator">jumping…</span> }
         </p>
+        @if (stageContentYear(); as stageYear) {
+          <span class="stage-content-year">{{ stageYear }}</span>
+        }
       </div>
 
       <div class="tunnel-slides" aria-hidden="true">
