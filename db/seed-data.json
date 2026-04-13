@@ -7,7 +7,7 @@
       "depthStart": 25,
       "depthEnd": 443,
       "projectIds": [],
-      "segmentCardIds": ["card-company-intel", "card-company-cambia", "card-company-basesite"]
+      "segmentCardIds": ["card-company-basesite", "card-company-cambia", "card-company-intel"]
     },
     {
       "id": "segment-side-projects",
@@ -43,8 +43,8 @@
       "segmentId": "segment-career",
       "title": "MECOP Data Solutions Intern at Intel",
       "description": "Built four Power BI dashboards for facility operations — covering electrical capacity, pump health, truck traffic, and water treatment — using Python ETL pipelines and SCADA/vendor data integrations.",
-      "depthStart": 105,
-      "depthEnd": 187,
+      "depthStart": 317,
+      "depthEnd": 374,
       "projectIds": ["intel-dashboards", "intel-community-of-practice"]
     },
     {
@@ -61,9 +61,9 @@
       "segmentId": "segment-career",
       "title": "Data Scientist at BaseSite",
       "description": "Own C#/MSSQL data pipelines, Power BI reporting, REST API integrations, and large-scale application support for a semiconductor machine installation platform.",
-      "depthStart": 317,
-      "depthEnd": 374,
-      "projectIds": ["basesite-support", "basesite-lspx", "basesite-application-support", "basesite-process-improvement"]
+      "depthStart": 105,
+      "depthEnd": 187,
+      "projectIds": ["basesite-support", "basesite-lspx", "basesite-lspx-website", "basesite-application-support", "basesite-process-improvement", "basesite-shared-grid-lib"]
     },
     {
       "id": "card-side-binx",
@@ -323,7 +323,23 @@
       "startDate": "2024-02-01",
       "technologies": ["Power BI", "MSSQL", "Primavera P6", "Data Analysis"],
       "tags": ["Career", "Dashboard"],
-      "media": [],
+      "media": [
+        {
+          "type": "image",
+          "url": "/assets/projects/RodDashboard.png",
+          "alt": "Record of Discussion dashboard"
+        },
+        {
+          "type": "image",
+          "url": "/assets/projects/DMRDashboard.png",
+          "alt": "Database Modification Request dashboard"
+        },
+        {
+          "type": "image",
+          "url": "/assets/projects/DCRDashboard.png",
+          "alt": "Design Change Report dashboard"
+        }
+      ],
       "links": [],
       "timelineWeight": 3
     },
@@ -336,7 +352,13 @@
       "startDate": "2024-02-01",
       "technologies": ["Application Support", "Customer Support", "Cross-Functional Collaboration", "Power BI"],
       "tags": ["Career", "Operations"],
-      "media": [],
+      "media": [
+        {
+          "type": "image",
+          "url": "/assets/projects/userback.png",
+          "alt": "Example of user feedback and issue tracking for application support"
+        }
+      ],
       "links": [],
       "timelineWeight": 2
     },
@@ -352,6 +374,43 @@
       "media": [],
       "links": [],
       "timelineWeight": 2
+    },
+    {
+      "id": "basesite-shared-grid-lib",
+      "slug": "basesite-shared-grid-lib",
+      "title": "basesite-shared-grid-lib (npm)",
+      "shortDescription": "Shared npm grid library for BaseSite projects, with significant authored contributions to reusable layout components and package behavior.",
+      "longDescription": "Made significant contributions to BaseSite's shared npm grid library used to standardize layout behavior across projects. Focused on reusable component design, grid utility improvements, and package-level consistency to support faster frontend delivery with a common foundation.",
+      "startDate": "2024-02-01",
+      "technologies": ["TypeScript", "Angular", "npm", "AG Grid"],
+      "tags": ["Career", "Open Source", "Frontend"],
+      "media": [],
+      "links": [
+        {
+          "label": "npm Package",
+          "url": "https://www.npmjs.com/package/basesite-shared-grid-lib"
+        }
+      ],
+      "timelineWeight": 3
+    },
+    {
+      "id": "basesite-lspx-website",
+      "slug": "basesite-lspx-website",
+      "title": "LSPx",
+      "shortDescription": "Web platform helping semiconductor manufacturers plan and manage the installation of complex machinery inside fabrication facilities.",
+      "longDescription": "LSPx is BaseSite's core web product — a platform that helps semiconductor manufacturers coordinate the end-to-end installation of complex equipment inside fabs. It manages installation schedules, equipment dependencies, stakeholder communication, and status tracking across a global user base. Contributed to application support, backend data pipelines, API integrations, and feature maintenance that keep the platform reliable for thousands of engineers and project managers working in semiconductor fabrication.",
+      "startDate": "2024-02-01",
+      "technologies": ["C#", ".NET", "MSSQL", "REST API", "Angular"],
+      "tags": ["Career", "Web App", "Enterprise"],
+      "media": [
+        {
+          "type": "image",
+          "url": "/assets/projects/LSPx.png",
+          "alt": "Home page of the LSPx web platform"
+        }
+      ],
+      "links": [],
+      "timelineWeight": 4
     }
   ]
 }
