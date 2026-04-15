@@ -44,6 +44,15 @@
         </p>
       </div>
 
+      <button
+        type="button"
+        class="tunnel-learn-card"
+        (click)="onLearnMoreCardClick()"
+        aria-label="Click to learn more about me">
+        <span class="tunnel-learn-card-label">Quick Prompt</span>
+        <span class="tunnel-learn-card-title">Click to learn more about me</span>
+      </button>
+
       <div class="tunnel-slides" aria-hidden="true">
         @for (slide of tunnelSlides(); track slide.globalIndex || slide.index) {
           @if (slide.isSegmentChoice) {

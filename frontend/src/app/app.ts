@@ -671,6 +671,15 @@ export class App implements OnInit, OnDestroy {
     this.resumeModalOpen.set(false);
   }
 
+  onLearnMoreCardClick(): void {
+    const firstProject = this.activeProjects()[0];
+    if (firstProject) {
+      this.selectedProject.set(firstProject);
+    }
+
+    this.scrollToProjectsPanel();
+  }
+
   onTunnelSlideClick(slide: AllSlide): void {
     this.state.setActiveSegment(slide.segment.id);
 
