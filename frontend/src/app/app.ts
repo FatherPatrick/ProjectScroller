@@ -136,6 +136,7 @@ export class App implements OnInit, OnDestroy {
   readonly prefersReducedMotion = signal(this.motionQuery.matches);
   readonly resumeDownloadUrl = this.resumeDocPath;
   readonly resumeModalOpen = signal(false);
+  readonly aboutMeModalOpen = signal(false);
   readonly resumeLoading = signal(false);
   readonly resumeLoadError = signal<string | null>(null);
   readonly resumeHtml = signal<SafeHtml | null>(null);
@@ -637,6 +638,7 @@ export class App implements OnInit, OnDestroy {
   @HostListener('document:keydown.escape')
   onEscape(): void {
     if (this.lightboxUrl()) { this.closeLightbox(); return; }
+    if (this.aboutMeModalOpen()) { this.closeAboutMeModal(); return; }
     if (this.resumeModalOpen()) { this.closeResumeViewer(); }
   }
 
@@ -671,13 +673,12 @@ export class App implements OnInit, OnDestroy {
     this.resumeModalOpen.set(false);
   }
 
-  onLearnMoreCardClick(): void {
-    const firstProject = this.activeProjects()[0];
-    if (firstProject) {
-      this.selectedProject.set(firstProject);
-    }
+  closeAboutMeModal(): void {
+    this.aboutMeModalOpen.set(false);
+  }
 
-    this.scrollToProjectsPanel();
+  onLearnMoreCardClick(): void {
+    this.aboutMeModalOpen.set(true);
   }
 
   onTunnelSlideClick(slide: AllSlide): void {

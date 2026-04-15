@@ -220,6 +220,38 @@
     </div>
   }
 
+  @if (aboutMeModalOpen()) {
+    <div class="about-me-modal-backdrop" (click)="closeAboutMeModal()">
+      <section class="about-me-modal" role="dialog" aria-modal="true" aria-label="About Patrick Park" (click)="$event.stopPropagation()">
+        <header class="about-me-modal-header">
+          <p class="about-me-modal-kicker">Cover Letter</p>
+          <button type="button" class="about-me-modal-close" (click)="closeAboutMeModal()">Close</button>
+        </header>
+        <article class="about-me-modal-content">
+          <h2 class="about-me-modal-title">Hi, I'm Patrick Park.</h2>
+          <p>
+            I am a software engineer who enjoys building products that feel thoughtful from both an engineering and user perspective.
+            My focus is full-stack development with a strong front-end lens, and I care deeply about performance, accessibility, and clear product storytelling.
+          </p>
+          <p>
+            My educational background in software and continuous technical learning shaped how I approach problem-solving: start with fundamentals,
+            build with intention, and communicate clearly. Across my projects, I bring ideas from concept to production by combining practical architecture,
+            clean implementation details, and a bias for shipping.
+          </p>
+          <p>
+            Outside of work, I am grounded by personal commitments and hobbies that keep me balanced and resilient. Caring for many animals has taught me consistency,
+            patience, and responsibility. Snowboarding keeps me energized, adaptable, and calm in fast-moving situations. I bring that same mindset to team environments.
+          </p>
+          <p>
+            I am currently looking for opportunities where I can contribute to meaningful products, keep growing as an engineer, and help teams deliver high-quality experiences.
+            If my background aligns with your needs, I would love to connect.
+          </p>
+          <a class="about-me-modal-email" href="mailto:patrickpark208@gmail.com?subject=Let%27s%20connect">Send an Email</a>
+        </article>
+      </section>
+    </div>
+  }
+
   @if (resumeModalOpen()) {
     <div class="resume-modal-backdrop" (click)="closeResumeViewer()">
       <section class="resume-modal" role="dialog" aria-modal="true" aria-label="Resume preview" (click)="$event.stopPropagation()">
