@@ -137,6 +137,7 @@ export class App implements OnInit, OnDestroy {
   readonly resumeDownloadUrl = this.resumeDocPath;
   readonly resumeModalOpen = signal(false);
   readonly aboutMeModalOpen = signal(false);
+  readonly stageCardCollapsed = signal(false);
   readonly resumeLoading = signal(false);
   readonly resumeLoadError = signal<string | null>(null);
   readonly resumeHtml = signal<SafeHtml | null>(null);
@@ -675,6 +676,10 @@ export class App implements OnInit, OnDestroy {
 
   closeAboutMeModal(): void {
     this.aboutMeModalOpen.set(false);
+  }
+
+  toggleStageCard(): void {
+    this.stageCardCollapsed.update(v => !v);
   }
 
   onLearnMoreCardClick(): void {

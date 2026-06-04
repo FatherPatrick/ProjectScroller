@@ -15,8 +15,8 @@
       "subDescription": "Public GitHub builds spanning mobile + backend systems, game-focused web tooling, and this cinematic portfolio tunnel.",
       "depthStart": 444,
       "depthEnd": 873,
-      "projectIds": ["proj-binx", "proj-tarkle", "proj-scroller"],
-      "segmentCardIds": ["card-side-binx", "card-side-tarkle", "card-side-scroller"]
+      "projectIds": ["proj-nail-studio", "proj-binx", "proj-tarkle", "proj-scroller"],
+      "segmentCardIds": ["card-side-nail-studio", "card-side-binx", "card-side-tarkle", "card-side-scroller"]
     },
     {
       "id": "segment-school",
@@ -64,6 +64,15 @@
       "depthStart": 105,
       "depthEnd": 187,
       "projectIds": ["basesite-support", "basesite-lspx", "basesite-lspx-website", "basesite-application-support", "basesite-process-improvement", "basesite-shared-grid-lib"]
+    },
+    {
+      "id": "card-side-nail-studio",
+      "segmentId": "segment-side-projects",
+      "title": "Nail Studio Booking App",
+      "description": "Full-stack, mobile-first appointment scheduling platform with automated SMS/email reminders, admin dashboard, and a native React Native admin app.",
+      "depthStart": 444,
+      "depthEnd": 523,
+      "projectIds": ["proj-nail-studio"]
     },
     {
       "id": "card-side-binx",
@@ -159,6 +168,24 @@
       "tags": ["Roles", "Leadership"],
       "media": [],
       "links": [],
+      "timelineWeight": 5
+    },
+    {
+      "id": "proj-nail-studio",
+      "slug": "nail-studio-booking",
+      "title": "Nail Studio Booking App",
+      "shortDescription": "Mobile-first appointment scheduling platform for a nail studio, with guided booking, automated reminders, and a full admin suite.",
+      "longDescription": "Built a full-stack appointment scheduling platform from the ground up for a nail studio client. The public-facing booking flow guides customers through service selection, date/time picking, and contact info entry — optimized for mobile throughout. Automated email and SMS confirmations are sent via Resend and Twilio, along with 24-hour reminders before each appointment. Customers can cancel via unique tokenized links without needing an account. The admin side includes magic-link sign-in, a calendar view, service management, blackout date configuration, and weekly hours settings. A companion React Native / Expo app gives the studio owner on-the-go visibility and management. Deployed serverlessly on Vercel with Neon Postgres and hourly cron jobs driving the reminder pipeline.",
+      "startDate": "2026-03-01",
+      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL", "Twilio", "Resend", "React Native", "Expo", "Vercel", "Neon"],
+      "tags": ["Side Projects", "Full Stack", "Mobile"],
+      "media": [],
+      "links": [
+        {
+          "label": "GitHub Repository",
+          "url": "https://github.com/FatherPatrick/ProjectSchedule"
+        }
+      ],
       "timelineWeight": 5
     },
     {
