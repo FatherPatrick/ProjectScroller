@@ -98,11 +98,11 @@ type ActiveProjectGroup = {
 })
 export class App implements OnInit, OnDestroy {
   private readonly SCENE_DEPTH_MULTIPLIER = 4;
-  private readonly DEPTH_VISIBILITY_RANGE = 260;
+  private readonly DEPTH_VISIBILITY_RANGE = 400;
   private readonly DEPTH_NORMALIZATION_RANGE = 220;
   private readonly DEPTH_FADE_START = 48;
   private readonly DEPTH_FADE_RANGE = 96;
-  private readonly DEPTH_SCALE_RANGE = 260;
+  private readonly DEPTH_SCALE_RANGE = 400;
   private readonly DEPTH_LATERAL_COMPRESSION = 0.12;
   private readonly DEPTH_VERTICAL_FACTOR = 0.18;
   private readonly DEPTH_Z_FACTOR = 8.5;
@@ -119,7 +119,32 @@ export class App implements OnInit, OnDestroy {
   };
 
   @ViewChild('projectsPanel')
+  private set projectsPanelSetter(ref: ElementRef<HTMLElement> | undefined) {
+    this.projectsPanelRef = ref;
+    this.panelObserver?.disconnect();
+
+    if (!ref || this.projectsPanelRevealed()) {
+      return;
+    }
+
+    this.panelObserver = new IntersectionObserver(
+      entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          this.projectsPanelRevealed.set(true);
+          this.panelObserver?.disconnect();
+        }
+      },
+      { threshold: 0.12 }
+    );
+    this.panelObserver.observe(ref.nativeElement);
+  }
+
   private projectsPanelRef?: ElementRef<HTMLElement>;
+  private panelObserver?: IntersectionObserver;
+  private scrollAnimationFrame: number | null = null;
+  private arriveTimeout: ReturnType<typeof setTimeout> | undefined;
+  readonly projectsPanelRevealed = signal(false);
+  readonly projectsPanelArriving = signal(false);
 
   @ViewChild('projectCardsScroller')
   private projectCardsScrollerRef?: ElementRef<HTMLElement>;
@@ -200,6 +225,21 @@ export class App implements OnInit, OnDestroy {
 
     return groups;
   });
+
+  readonly storyBeats = computed<number[]>(() => {
+    const beats = new Set<number>();
+    this.timelineSegments().forEach(segment => beats.add(segment.depthStart));
+    this.allSegmentCards().forEach(card => beats.add((card.depthStart + card.depthEnd) / 2));
+    return Array.from(beats).sort((a, b) => a - b);
+  });
+
+  readonly hasPrevBeat = computed(() =>
+    this.storyBeats().some(beat => beat < this.state.zoomDepth() - 2)
+  );
+
+  readonly hasNextBeat = computed(() =>
+    this.storyBeats().some(beat => beat > this.state.zoomDepth() + 2)
+  );
 
   readonly activeSegmentIndex = computed(() => {
     const activeId = this.state.activeSegmentId();
@@ -590,6 +630,71 @@ export class App implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.motionQuery.removeEventListener('change', this.onMotionChange);
+    this.panelObserver?.disconnect();
+    this.cancelScrollAnimation();
+    if (this.arriveTimeout !== undefined) {
+      clearTimeout(this.arriveTimeout);
+    }
+  }
+
+  stepBeat(direction: 1 | -1): void {
+    const depth = this.state.zoomDepth();
+    const beats = this.storyBeats();
+    const target = direction === 1
+      ? beats.find(beat => beat > depth + 2)
+      : [...beats].reverse().find(beat => beat < depth - 2);
+
+    if (target === undefined) {
+      return;
+    }
+
+    const duration = this.getManualJumpDuration(depth, target);
+    this.zoomEngine.jumpToDepth(target, duration);
+  }
+
+  onViewDetailsClick(): void {
+    this.scrollToProjectsPanel();
+  }
+
+  scrollToTunnelTop(): void {
+    if (this.prefersReducedMotion()) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return;
+    }
+
+    this.animateScrollTo(() => 0, 900);
+  }
+
+  // Eased page scroll that re-resolves its target every frame, so it stays
+  // accurate while the projects panel re-lays out (e.g. detail split opening).
+  private animateScrollTo(getTargetTop: () => number, duration: number): void {
+    this.cancelScrollAnimation();
+
+    const startY = window.scrollY;
+    const startTime = performance.now();
+    const easeInOutCubic = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const step = (now: number) => {
+      const t = Math.min(1, (now - startTime) / duration);
+      const eased = easeInOutCubic(t);
+      window.scrollTo(0, startY + (getTargetTop() - startY) * eased);
+
+      if (t < 1) {
+        this.scrollAnimationFrame = requestAnimationFrame(step);
+      } else {
+        this.scrollAnimationFrame = null;
+      }
+    };
+
+    this.scrollAnimationFrame = requestAnimationFrame(step);
+  }
+
+  private cancelScrollAnimation(): void {
+    if (this.scrollAnimationFrame !== null) {
+      cancelAnimationFrame(this.scrollAnimationFrame);
+      this.scrollAnimationFrame = null;
+    }
   }
 
   jumpToSegment(segment: TimelineSegment): void {
@@ -750,8 +855,32 @@ export class App implements OnInit, OnDestroy {
       return;
     }
 
-    const behavior: ScrollBehavior = this.prefersReducedMotion() ? 'auto' : 'smooth';
-    element.scrollIntoView({ behavior, block: 'start' });
+    this.projectsPanelRevealed.set(true);
+
+    if (this.prefersReducedMotion()) {
+      element.scrollIntoView({ behavior: 'auto', block: 'start' });
+      return;
+    }
+
+    this.triggerPanelArrive();
+    this.animateScrollTo(
+      () => window.scrollY + element.getBoundingClientRect().top - 12,
+      950
+    );
+  }
+
+  // Replays the panel's slide-up entrance on every intentional navigation,
+  // not just the first time it scrolls into view.
+  private triggerPanelArrive(): void {
+    if (this.arriveTimeout !== undefined) {
+      clearTimeout(this.arriveTimeout);
+    }
+
+    this.projectsPanelArriving.set(false);
+    requestAnimationFrame(() => {
+      this.projectsPanelArriving.set(true);
+      this.arriveTimeout = setTimeout(() => this.projectsPanelArriving.set(false), 1600);
+    });
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -765,14 +894,20 @@ export class App implements OnInit, OnDestroy {
     const activeId = this.state.activeSegmentId();
     const currentIndex = segments.findIndex(s => s.id === activeId);
 
-    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+    if (event.key === 'ArrowRight') {
       event.preventDefault();
       const next = segments[currentIndex + 1];
       if (next) this.jumpToSegment(next);
-    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+    } else if (event.key === 'ArrowLeft') {
       event.preventDefault();
       const prev = segments[currentIndex - 1];
       if (prev) this.jumpToSegment(prev);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.stepBeat(1);
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.stepBeat(-1);
     } else if (event.key === '+' || event.key === '=' || event.key === 'PageUp') {
       event.preventDefault();
       this.nudgeDepth(4);

@@ -54,6 +54,26 @@
         }
       </div>
 
+      <nav class="tunnel-nav" aria-label="Tunnel navigation">
+        <button
+          type="button"
+          class="tunnel-nav-btn"
+          (click)="stepBeat(1)"
+          [disabled]="!hasNextBeat()"
+          aria-label="Next card, zoom deeper">▲</button>
+        <button
+          type="button"
+          class="tunnel-nav-btn"
+          (click)="stepBeat(-1)"
+          [disabled]="!hasPrevBeat()"
+          aria-label="Previous card, zoom out">▼</button>
+        <button
+          type="button"
+          class="tunnel-nav-btn tunnel-nav-details"
+          (click)="onViewDetailsClick()"
+          aria-label="Scroll down to project details">Details</button>
+      </nav>
+
       <button
         type="button"
         class="tunnel-learn-card"
@@ -170,11 +190,21 @@
   </section>
 
   @if (!isLoading() && !loadError() && activeProjects().length > 0) {
-    <div #projectsPanel class="projects-panel" [class.projects-panel-split]="selectedProject()">
+    <div
+      #projectsPanel
+      class="projects-panel"
+      [class.projects-panel-split]="selectedProject()"
+      [class.projects-panel-pending]="!projectsPanelRevealed()"
+      [class.projects-panel-arrive]="projectsPanelArriving()">
       <div class="projects-list">
         <h2 class="projects-panel-heading">
           {{ activeSegment()?.label }} Projects
           <span class="projects-count">{{ activeProjects().length }}</span>
+          <button
+            type="button"
+            class="back-to-tunnel-btn"
+            (click)="scrollToTunnelTop()"
+            aria-label="Scroll back up to the tunnel">▲ Back to tunnel</button>
         </h2>
         <div #projectCardsScroller class="project-cards">
           @for (group of activeProjectGroups(); track group.id) {
@@ -219,7 +249,7 @@
           <small>{{ segment.depthStart }}–{{ segment.depthEnd }}</small>
         </button>
       }
-      <span class="keyboard-hint" aria-hidden="true">scroll to zoom | slides pass in 3D | ← → jump | +/- fine tune</span>
+      <span class="keyboard-hint" aria-hidden="true">scroll to zoom | ↑ ↓ step cards | ← → jump chapters | +/- fine tune</span>
     }
   </nav>
 

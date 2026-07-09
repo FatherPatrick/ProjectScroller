@@ -136,6 +136,61 @@
 	color: rgba(220, 239, 255, 0.95);
 }
 
+.tunnel-nav {
+	position: absolute;
+	right: clamp(0.7rem, 1.6vw, 1.4rem);
+	top: 50%;
+	transform: translateY(-50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.45rem;
+	z-index: 8;
+}
+
+.tunnel-nav-btn {
+	display: grid;
+	place-items: center;
+	width: 2.6rem;
+	height: 2.6rem;
+	border-radius: 999px;
+	border: 1px solid rgba(122, 240, 255, 0.35);
+	background: rgba(4, 12, 26, 0.78);
+	backdrop-filter: blur(8px);
+	color: rgba(220, 239, 255, 0.92);
+	font: inherit;
+	font-size: 0.72rem;
+	cursor: pointer;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+
+	&:hover:not(:disabled) {
+		border-color: rgba(122, 240, 255, 0.6);
+		box-shadow: 0 0 14px rgba(122, 240, 255, 0.22);
+		transform: translateY(-1px);
+	}
+
+	&:disabled {
+		opacity: 0.3;
+		cursor: default;
+	}
+
+	&:focus-visible {
+		outline: 2px solid rgba(122, 240, 255, 0.95);
+		outline-offset: 2px;
+	}
+}
+
+.tunnel-nav-details {
+	width: auto;
+	height: 2.2rem;
+	padding: 0 0.85rem;
+	font-size: 0.62rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: rgba(122, 240, 255, 0.85);
+}
+
 .stage-content-year {
 	position: absolute;
 	right: 1.2rem;
@@ -1189,11 +1244,52 @@
 	overflow: hidden;
 	margin-bottom: 5.2rem;
 	animation: fade-up 0.3s ease-out;
+	transition: opacity 0.7s ease, transform 0.7s ease;
+
+	&.projects-panel-pending {
+		opacity: 0.1;
+		transform: translateY(38px);
+	}
+
+	&.projects-panel-arrive {
+		animation: panel-arrive 0.9s ease-out 0.25s both;
+	}
 
 	&.projects-panel-split {
 		grid-template-columns: minmax(0, 1fr) 380px;
 		align-items: start;
 		overflow: visible;
+	}
+}
+
+@keyframes panel-arrive {
+	from {
+		opacity: 0.25;
+		transform: translateY(42px);
+		box-shadow: 0 0 0 rgba(94, 255, 199, 0);
+	}
+	60% {
+		box-shadow: 0 0 34px rgba(94, 255, 199, 0.22);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+		box-shadow: 0 0 0 rgba(94, 255, 199, 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.projects-panel {
+		transition: none;
+
+		&.projects-panel-pending {
+			opacity: 1;
+			transform: none;
+		}
+
+		&.projects-panel-arrive {
+			animation: none;
+		}
 	}
 }
 
@@ -1336,6 +1432,31 @@
 	color: var(--accent);
 	font-size: 0.72rem;
 	font-weight: 600;
+}
+
+.back-to-tunnel-btn {
+	margin-left: auto;
+	border: 1px solid rgba(94, 255, 199, 0.25);
+	border-radius: 999px;
+	padding: 0.35rem 0.8rem;
+	background: rgba(8, 16, 33, 0.72);
+	color: var(--accent-soft);
+	font: inherit;
+	font-size: 0.66rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+	&:hover {
+		border-color: rgba(94, 255, 199, 0.5);
+		box-shadow: 0 0 10px rgba(94, 255, 199, 0.18);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
 }
 
 .project-cards {
