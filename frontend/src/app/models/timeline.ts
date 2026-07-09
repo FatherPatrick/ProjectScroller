@@ -1,4 +1,4 @@
-export type TimelineSegment = {
+export interface TimelineSegment {
   id: string;
   label: string;
   subDescription?: string;
@@ -6,9 +6,9 @@ export type TimelineSegment = {
   depthEnd: number;
   projectIds: string[];
   segmentCardIds?: string[];
-};
+}
 
-export type SegmentCard = {
+export interface SegmentCard {
   id: string;
   segmentId: string;
   title: string;
@@ -16,27 +16,27 @@ export type SegmentCard = {
   depthStart: number;
   depthEnd: number;
   projectIds: string[];
-};
+}
 
-export type ProjectMedia = {
+export interface ProjectMedia {
   type: 'image' | 'video';
   url: string;
   alt?: string;
-};
+}
 
-export type ProjectLink = {
+export interface ProjectLink {
   label: string;
   url: string;
-};
+}
 
-export type SubMilestone = {
+export interface SubMilestone {
   id: string;
   title: string;
   description: string;
   date: string;
-};
+}
 
-export type Project = {
+export interface Project {
   id: string;
   slug: string;
   title: string;
@@ -50,17 +50,17 @@ export type Project = {
   links?: ProjectLink[];
   timelineWeight: number;
   submilestones?: SubMilestone[];
-};
+}
 
-export type TimelineResponse = {
+export interface TimelineResponse {
   timelineSegments: TimelineSegment[];
   segmentCards?: SegmentCard[];
-};
+}
 
-export type ProjectsResponse = {
+export interface ProjectsResponse {
   projects: Project[];
-};
+}
 
-export type ProjectResponse = {
+export interface ProjectResponse {
   project: Project;
-};
+}

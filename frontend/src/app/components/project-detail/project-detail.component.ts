@@ -11,7 +11,7 @@ import type { Project } from '../../models/timeline';
       <header class="detail-header">
         <div class="detail-title-row">
           <h2 class="detail-title">{{ project.title }}</h2>
-          <button type="button" class="detail-close" (click)="close.emit()" aria-label="Close detail">✕</button>
+          <button type="button" class="detail-close" (click)="closed.emit()" aria-label="Close detail">✕</button>
         </div>
         <div class="detail-meta">
           <span class="detail-dates">
@@ -100,7 +100,7 @@ import type { Project } from '../../models/timeline';
 })
 export class ProjectDetailComponent {
   @Input({ required: true }) project!: Project;
-  @Output() close = new EventEmitter<void>();
+  @Output() closed = new EventEmitter<void>();
   @Output() lightboxOpen = new EventEmitter<{ url: string; alt: string }>();
 
   // lightbox is handled at app root to avoid backdrop-filter containment

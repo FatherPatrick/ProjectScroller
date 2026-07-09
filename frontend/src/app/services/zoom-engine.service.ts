@@ -1,18 +1,19 @@
-import { Injectable, NgZone, inject } from '@angular/core';
+import { Injectable, NgZone, inject, OnDestroy } from '@angular/core';
 import { InputNormalizerService } from './input-normalizer.service';
 import { AppStateService } from './app-state.service';
 import type { TimelineSegment } from '../models/timeline';
+import { TUNNEL_CONFIG } from '../tunnel-config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ZoomEngineService {
+export class ZoomEngineService implements OnDestroy {
   private inputNormalizer = inject(InputNormalizerService);
   private appState = inject(AppStateService);
   private ngZone = inject(NgZone);
 
-  private readonly MIN_DEPTH = 0;
-  private readonly MAX_DEPTH = 1000;
+  private readonly MIN_DEPTH = TUNNEL_CONFIG.minDepth;
+  private readonly MAX_DEPTH = TUNNEL_CONFIG.maxDepth;
   private readonly DAMPING_FACTOR = 0.975; // Slower decay for a smoother, longer ease-out
   private readonly MOMENTUM_THRESHOLD = 0.04;
   private readonly MAX_VELOCITY = 3.2;
@@ -87,7 +88,7 @@ export class ZoomEngineService {
    * Jump to a specific depth with a fast mid-flight zoom profile.
    * Resolves active segment on every frame during the animation.
    */
-  jumpToDepth(targetDepth: number, durationMs: number = 300): void {
+  jumpToDepth(targetDepth: number, durationMs = 300): void {
     const clampedTarget = Math.max(this.MIN_DEPTH, Math.min(this.MAX_DEPTH, targetDepth));
     const startDepth = this.appState.zoomDepth();
     const startTime = performance.now();

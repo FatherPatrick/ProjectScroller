@@ -11,7 +11,7 @@ import type { Project } from '../../models/timeline';
       type="button"
       class="project-card"
       [class.project-card-selected]="selected"
-      (click)="select.emit(project)">
+      (click)="projectSelect.emit(project)">
       <div class="card-header">
         <span class="card-title">{{ project.title }}</span>
         <span class="card-dates">
@@ -64,7 +64,7 @@ import type { Project } from '../../models/timeline';
 export class ProjectCardComponent {
   @Input({ required: true }) project!: Project;
   @Input() selected = false;
-  @Output() select = new EventEmitter<Project>();
+  @Output() projectSelect = new EventEmitter<Project>();
 
   readonly isExpanded = signal(false);
 

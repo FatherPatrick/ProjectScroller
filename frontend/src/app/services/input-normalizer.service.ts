@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { Subject, Observable, merge } from 'rxjs';
 import { throttleTime, filter } from 'rxjs/operators';
 
@@ -6,6 +6,7 @@ import { throttleTime, filter } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class InputNormalizerService {
+  private ngZone = inject(NgZone);
   private wheelDelta$ = new Subject<number>();
   private touchDelta$ = new Subject<number>();
   private lastTouchDistance = 0;
@@ -21,7 +22,7 @@ export class InputNormalizerService {
     filter(delta => delta !== 0) // Ignore zero deltas
   );
 
-  constructor(private ngZone: NgZone) {
+  constructor() {
     this.initializeInputListeners();
   }
 

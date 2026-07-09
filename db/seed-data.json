@@ -129,48 +129,6 @@
       "timelineWeight": 3
     },
     {
-      "id": "proj-research-lab",
-      "slug": "research-lab-tooling",
-      "title": "Research Lab Tooling",
-      "shortDescription": "Internal tools for experiment coordination.",
-      "longDescription": "Created lightweight web tooling for scheduling and tracking recurring lab experiments.",
-      "startDate": "2018-09-01",
-      "endDate": "2019-01-05",
-      "technologies": ["Angular", "Node.js"],
-      "tags": ["School", "Internal Tool"],
-      "media": [],
-      "links": [],
-      "timelineWeight": 2
-    },
-    {
-      "id": "proj-career-portal",
-      "slug": "career-operations-portal",
-      "title": "Career Operations Portal",
-      "shortDescription": "Unified operations dashboard for cross-team workflows.",
-      "longDescription": "Designed and shipped a web portal that consolidated fragmented workflows into one interface.",
-      "startDate": "2020-06-01",
-      "endDate": "2021-11-10",
-      "technologies": ["Angular", "C#", ".NET"],
-      "tags": ["Career", "Dashboard"],
-      "media": [],
-      "links": [],
-      "timelineWeight": 4
-    },
-    {
-      "id": "proj-role-ui-lead",
-      "slug": "role-ui-modernization",
-      "title": "UI Modernization Lead",
-      "shortDescription": "Led modernization of a legacy enterprise UI.",
-      "longDescription": "Owned migration planning and component strategy for a legacy frontend modernization effort.",
-      "startDate": "2022-01-03",
-      "endDate": "2023-06-20",
-      "technologies": ["Angular", "RxJS", "SCSS"],
-      "tags": ["Roles", "Leadership"],
-      "media": [],
-      "links": [],
-      "timelineWeight": 5
-    },
-    {
       "id": "proj-nail-studio",
       "slug": "nail-studio-booking",
       "title": "Nail Studio Booking App",

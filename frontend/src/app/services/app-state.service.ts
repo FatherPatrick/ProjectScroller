@@ -1,10 +1,11 @@
 import { Injectable, computed, signal } from '@angular/core';
 import type { TimelineSegment } from '../models/timeline';
+import { TUNNEL_CONFIG } from '../tunnel-config';
 
 @Injectable({ providedIn: 'root' })
 export class AppStateService {
-  readonly minDepth = 0;
-  readonly maxDepth = 1000;
+  readonly minDepth = TUNNEL_CONFIG.minDepth;
+  readonly maxDepth = TUNNEL_CONFIG.maxDepth;
 
   readonly zoomDepth = signal(0);
   readonly activeSegmentId = signal<string | null>(null);

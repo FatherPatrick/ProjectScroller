@@ -5,11 +5,12 @@ import {
   Input,
   NgZone,
   OnDestroy,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import * as THREE from 'three';
 
-type VisualBlobSeed = {
+interface VisualBlobSeed {
   laneOffset: number;
   orbitRadius: number;
   orbitAspect: number;
@@ -19,15 +20,15 @@ type VisualBlobSeed = {
   speed: number;
   depth: number;
   chaos: number;
-};
+}
 
-type SparkSeed = {
+interface SparkSeed {
   laneOffset: number;
   radius: number;
   phase: number;
   speed: number;
   depth: number;
-};
+}
 
 const FULLSCREEN_VERTEX_SHADER = `
   varying vec2 vUv;
@@ -133,16 +134,25 @@ export class ThreeTunnelComponent implements AfterViewInit, OnDestroy {
   private presentMaterial?: THREE.ShaderMaterial;
   private quadGeometry?: THREE.PlaneGeometry;
   private animationFrameId: number | null = null;
+  private isOnScreen = true;
+  private visibilityObserver?: IntersectionObserver;
   // Neon "light synth" ramp: magenta -> violet -> cyan -> blue -> violet -> pink.
   private readonly xboxHueStops = [0.85, 0.75, 0.5, 0.62, 0.78, 0.92];
 
-  constructor(private readonly ngZone: NgZone) {}
+  private readonly ngZone = inject(NgZone);
 
   ngAfterViewInit(): void {
     this.initializeScene();
     this.handleResize();
 
     window.addEventListener('resize', this.handleResize, { passive: true });
+
+    // Skip rendering while the stage is scrolled out of view (e.g. reading
+    // the projects panel) — saves GPU/battery without tearing down the scene.
+    this.visibilityObserver = new IntersectionObserver(entries => {
+      this.isOnScreen = entries.some(entry => entry.isIntersecting);
+    });
+    this.visibilityObserver.observe(this.canvasRef.nativeElement);
 
     this.ngZone.runOutsideAngular(() => {
       this.animationFrameId = requestAnimationFrame(this.renderFrame);
@@ -155,6 +165,7 @@ export class ThreeTunnelComponent implements AfterViewInit, OnDestroy {
     }
 
     window.removeEventListener('resize', this.handleResize);
+    this.visibilityObserver?.disconnect();
 
     this.blobMaterials.forEach(material => material.dispose());
     this.blobTexture?.dispose();
@@ -360,6 +371,11 @@ export class ThreeTunnelComponent implements AfterViewInit, OnDestroy {
       !this.rtRead || !this.rtWrite || !this.feedbackScene || !this.presentScene ||
       !this.screenCamera || !this.feedbackMaterial || !this.presentMaterial
     ) {
+      return;
+    }
+
+    if (!this.isOnScreen) {
+      this.animationFrameId = requestAnimationFrame(this.renderFrame);
       return;
     }
 

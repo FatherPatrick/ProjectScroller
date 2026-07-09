@@ -7,13 +7,18 @@
       </div>
     } @else if (loadError()) {
       <div class="viewport-state-panel">
-        <p class="error-state">{{ loadError() }}</p>
+        <div class="error-state-block">
+          <p class="error-state">{{ loadError() }}</p>
+          <button type="button" class="error-retry-btn" (click)="loadTimeline()">Try again</button>
+        </div>
       </div>
     } @else {
-      <app-three-tunnel
-        [depth]="state.zoomDepth()"
-        [reducedMotion]="prefersReducedMotion()">
-      </app-three-tunnel>
+      @defer (on idle) {
+        <app-three-tunnel
+          [depth]="state.zoomDepth()"
+          [reducedMotion]="prefersReducedMotion()">
+        </app-three-tunnel>
+      }
 
       <div class="stage-content" [class.stage-content-collapsed]="stageCardCollapsed()">
         <div class="stage-heading-row">
@@ -83,7 +88,7 @@
         <span class="tunnel-learn-card-title">Click to learn more about me</span>
       </button>
 
-      <div class="tunnel-slides" aria-hidden="true">
+      <div class="tunnel-slides">
         @for (slide of tunnelSlides(); track slide.globalIndex || slide.index) {
           @if (slide.isSegmentChoice) {
             <div
@@ -110,7 +115,12 @@
               [style.transform]="slide.transform"
               [style.filter]="slide.blur"
               [style.z-index]="slide.zIndex"
-              (click)="onTunnelSlideClick(slide)">
+              role="button"
+              [attr.tabindex]="slide.isVisible ? 0 : -1"
+              [attr.aria-label]="slide.segment.label + ' chapter — open project details'"
+              (click)="onTunnelSlideClick(slide)"
+              (keydown.enter)="onTunnelSlideClick(slide)"
+              (keydown.space)="$event.preventDefault(); onTunnelSlideClick(slide)">
               <div class="tunnel-slide-surface">
                 <div class="tunnel-slide-header">
                   <span class="tunnel-slide-index">{{ slide.index + 1 }}/{{ timelineSegments().length }}</span>
@@ -141,7 +151,12 @@
               [style.transform]="slide.transform"
               [style.filter]="slide.blur"
               [style.z-index]="slide.zIndex"
-              (click)="onTunnelSlideClick(slide)">
+              role="button"
+              [attr.tabindex]="slide.isVisible ? 0 : -1"
+              [attr.aria-label]="slide.card.title + ' — open project details'"
+              (click)="onTunnelSlideClick(slide)"
+              (keydown.enter)="onTunnelSlideClick(slide)"
+              (keydown.space)="$event.preventDefault(); onTunnelSlideClick(slide)">
               <div class="tunnel-slide-surface tunnel-slide-surface-card">
                 <div class="segment-card-marker"></div>
                 <h3 class="tunnel-slide-card-title">{{ slide.card.title }}</h3>
@@ -175,7 +190,12 @@
               [style.transform]="slide.transform"
               [style.filter]="slide.blur"
               [style.z-index]="slide.zIndex"
-              (click)="onTunnelSlideClick(slide)">
+              role="button"
+              [attr.tabindex]="slide.isVisible ? 0 : -1"
+              [attr.aria-label]="slide.submilestone.title + ' — open project details'"
+              (click)="onTunnelSlideClick(slide)"
+              (keydown.enter)="onTunnelSlideClick(slide)"
+              (keydown.space)="$event.preventDefault(); onTunnelSlideClick(slide)">
               <div class="tunnel-slide-surface tunnel-slide-surface-sub">
                 <div class="submilestone-marker"></div>
                 <h3 class="tunnel-slide-submilestone-title">{{ slide.submilestone.title }}</h3>
@@ -218,7 +238,7 @@
                 <app-project-card
                   [project]="project"
                   [selected]="selectedProject()?.id === project.id"
-                  (select)="openProject($event)">
+                  (projectSelect)="openProject($event)">
                 </app-project-card>
               }
             </section>
@@ -228,7 +248,7 @@
       @if (selectedProject(); as project) {
         <app-project-detail
           [project]="project"
-          (close)="closeProject()"
+          (closed)="closeProject()"
           (lightboxOpen)="openLightbox($event)">
         </app-project-detail>
       }
@@ -254,15 +274,19 @@
   </nav>
 
   @if (lightboxUrl()) {
-    <div class="lightbox-backdrop" (click)="closeLightbox()" role="dialog" aria-modal="true" [attr.aria-label]="lightboxAlt()">
+    <!-- Backdrop click-to-close is a mouse convenience; Escape and the visible close button cover keyboard users. -->
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+    <div class="lightbox-backdrop" (click)="$event.target === $event.currentTarget && closeLightbox()" role="dialog" aria-modal="true" [attr.aria-label]="lightboxAlt()">
       <button type="button" class="lightbox-close" (click)="closeLightbox()" aria-label="Close image">✕</button>
-      <img class="lightbox-img" [src]="lightboxUrl()" [alt]="lightboxAlt()" (click)="$event.stopPropagation()" />
+      <img class="lightbox-img" [src]="lightboxUrl()" [alt]="lightboxAlt()" />
     </div>
   }
 
   @if (aboutMeModalOpen()) {
-    <div class="about-me-modal-backdrop" (click)="closeAboutMeModal()">
-      <section class="about-me-modal" role="dialog" aria-modal="true" aria-label="About Patrick Park" (click)="$event.stopPropagation()">
+    <!-- Backdrop click-to-close is a mouse convenience; Escape and the visible close button cover keyboard users. -->
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+    <div class="about-me-modal-backdrop" (click)="$event.target === $event.currentTarget && closeAboutMeModal()">
+      <section class="about-me-modal" role="dialog" aria-modal="true" aria-label="About Patrick Park">
         <header class="about-me-modal-header">
           <p class="about-me-modal-kicker">Cover Letter</p>
           <button type="button" class="about-me-modal-close" (click)="closeAboutMeModal()">Close</button>
@@ -293,8 +317,10 @@
   }
 
   @if (resumeModalOpen()) {
-    <div class="resume-modal-backdrop" (click)="closeResumeViewer()">
-      <section class="resume-modal" role="dialog" aria-modal="true" aria-label="Resume preview" (click)="$event.stopPropagation()">
+    <!-- Backdrop click-to-close is a mouse convenience; Escape and the visible close button cover keyboard users. -->
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+    <div class="resume-modal-backdrop" (click)="$event.target === $event.currentTarget && closeResumeViewer()">
+      <section class="resume-modal" role="dialog" aria-modal="true" aria-label="Resume preview">
         <header class="resume-modal-header">
           <h2 class="resume-modal-title">Resume Preview</h2>
           <div class="resume-modal-actions">

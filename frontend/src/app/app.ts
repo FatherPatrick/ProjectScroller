@@ -8,8 +8,26 @@ import { ZoomEngineService } from './services/zoom-engine.service';
 import { ProjectCardComponent } from './components/project-card/project-card.component';
 import { ProjectDetailComponent } from './components/project-detail/project-detail.component';
 import { ThreeTunnelComponent } from './components/three-tunnel/three-tunnel.component';
+import { TUNNEL_CONFIG } from './tunnel-config';
 
-type TunnelSlide = {
+interface SlideGeometryOptions {
+  side: 'left' | 'right' | 'center';
+  baseLaneOffset: number;
+  laneCompressionCap: number;
+  scaleBase: number;
+  scaleSpan: number;
+  opacityFactor: number;
+}
+
+interface SlideGeometry {
+  distance: number;
+  isVisible: boolean;
+  opacity: number;
+  blur: string;
+  transform: string;
+}
+
+interface TunnelSlide {
   segment: TimelineSegment;
   projects: Project[];
   index: number;
@@ -27,9 +45,9 @@ type TunnelSlide = {
   isSegmentCard: false;
   isSegmentChoice: false;
   depth: number;
-};
+}
 
-type SegmentCardSlide = {
+interface SegmentCardSlide {
   segment: TimelineSegment;
   card: SegmentCard;
   projects: Project[];
@@ -45,9 +63,9 @@ type SegmentCardSlide = {
   isSegmentCard: true;
   isSegmentChoice: false;
   depth: number;
-};
+}
 
-type SubmilestoneSlide = {
+interface SubmilestoneSlide {
   segment: TimelineSegment;
   project: Project;
   submilestone: SubMilestone;
@@ -63,9 +81,9 @@ type SubmilestoneSlide = {
   isSegmentCard: false;
   isSegmentChoice: false;
   depth: number;
-};
+}
 
-type SegmentChoiceSlide = {
+interface SegmentChoiceSlide {
   segment: TimelineSegment;
   index: number;
   globalIndex: number;
@@ -78,16 +96,16 @@ type SegmentChoiceSlide = {
   isSegmentCard: false;
   isSegmentChoice: true;
   depth: number;
-};
+}
 
 type AllSlide = TunnelSlide | SegmentCardSlide | SubmilestoneSlide | SegmentChoiceSlide;
 
-type ActiveProjectGroup = {
+interface ActiveProjectGroup {
   id: string;
   label: string;
   title: string;
   projects: Project[];
-};
+}
 
 @Component({
   selector: 'app-root',
@@ -97,23 +115,11 @@ type ActiveProjectGroup = {
   imports: [CommonModule, ProjectCardComponent, ProjectDetailComponent, ThreeTunnelComponent]
 })
 export class App implements OnInit, OnDestroy {
-  private readonly SCENE_DEPTH_MULTIPLIER = 4;
-  private readonly DEPTH_VISIBILITY_RANGE = 400;
-  private readonly DEPTH_NORMALIZATION_RANGE = 220;
-  private readonly DEPTH_FADE_START = 48;
-  private readonly DEPTH_FADE_RANGE = 96;
-  private readonly DEPTH_SCALE_RANGE = 400;
-  private readonly DEPTH_LATERAL_COMPRESSION = 0.12;
-  private readonly DEPTH_VERTICAL_FACTOR = 0.18;
-  private readonly DEPTH_Z_FACTOR = 8.5;
-  private readonly DEPTH_ROTATE_X_FACTOR = 0.018;
-  private readonly DEPTH_ROTATE_Y_FACTOR = 0.012;
-
   private readonly timelineApi = inject(TimelineApiService);
   private readonly zoomEngine = inject(ZoomEngineService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  private readonly resumeDocPath = '/PatrickParkResume2026.docx';
+  private readonly resumeDocPath = '/PatrickParkResume.docx';
   private readonly onMotionChange = (event: MediaQueryListEvent) => {
     this.prefersReducedMotion.set(event.matches);
   };
@@ -335,7 +341,7 @@ export class App implements OnInit, OnDestroy {
       globalIndex++;
 
       // Add centered choice card just before the segment's main slide
-      const choiceDepth = Math.max(0, segment.depthStart - 25);
+      const choiceDepth = Math.max(0, segment.depthStart - TUNNEL_CONFIG.choiceCardLeadIn);
       const choiceSlide = this.calculateChoiceSlide(segment, globalIndex, choiceDepth, currentDepth);
       allSlides.push(choiceSlide);
       globalIndex++;
@@ -383,6 +389,50 @@ export class App implements OnInit, OnDestroy {
     return allSlides;
   });
 
+  /**
+   * Shared depth→3D-transform math for every slide variant. Converts a slide's
+   * depth (relative to the viewer's current depth) into opacity, scale, blur,
+   * and a CSS transform, parameterized by the variant's lane and sizing.
+   */
+  private computeSlideGeometry(
+    depth: number,
+    currentDepth: number,
+    options: SlideGeometryOptions
+  ): SlideGeometry {
+    const sceneRelativeDepth = (depth - currentDepth) * TUNNEL_CONFIG.sceneDepthMultiplier;
+    const distance = Math.abs(sceneRelativeDepth);
+    const normalizedDistance = Math.min(distance / TUNNEL_CONFIG.normalizationRange, 1.8);
+    const passedViewer = sceneRelativeDepth < -TUNNEL_CONFIG.fadeStart;
+    const viewerFade = passedViewer
+      ? Math.max(0, 1 - (distance - TUNNEL_CONFIG.fadeStart) / TUNNEL_CONFIG.fadeRange)
+      : 1;
+    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade) * options.opacityFactor;
+    const scale = options.scaleBase + Math.max(0, 1 - distance / TUNNEL_CONFIG.scaleRange) * options.scaleSpan;
+    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
+    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * TUNNEL_CONFIG.verticalFactor));
+    const zOffset = -sceneRelativeDepth * TUNNEL_CONFIG.zFactor;
+    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * TUNNEL_CONFIG.rotateXFactor));
+
+    let rotateYPart = '';
+    let lateralOffset = 0;
+    if (options.side !== 'center') {
+      const laneDirection = options.side === 'left' ? -1 : 1;
+      const facingDirection = options.side === 'left' ? 1 : -1;
+      const laneCompression = Math.min(distance * TUNNEL_CONFIG.lateralCompression, options.laneCompressionCap);
+      lateralOffset = laneDirection * (options.baseLaneOffset - laneCompression);
+      const rotateY = facingDirection * Math.max(4, Math.min(18, 6 + distance * TUNNEL_CONFIG.rotateYFactor));
+      rotateYPart = ` rotateY(${rotateY.toFixed(2)}deg)`;
+    }
+
+    return {
+      distance,
+      isVisible: distance <= TUNNEL_CONFIG.visibilityRange,
+      opacity,
+      blur: `blur(${blurAmount.toFixed(2)}px)`,
+      transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg)${rotateYPart} scale(${scale.toFixed(4)})`
+    };
+  }
+
   private calculateMainSlide(
     segment: TimelineSegment,
     projects: Project[],
@@ -391,28 +441,15 @@ export class App implements OnInit, OnDestroy {
     currentDepth: number,
     activeId: string | null
   ): TunnelSlide {
-    const relativeDepth = depthCenter - currentDepth;
-    const sceneRelativeDepth = relativeDepth * this.SCENE_DEPTH_MULTIPLIER;
-    const distance = Math.abs(sceneRelativeDepth);
-    const normalizedDistance = Math.min(distance / this.DEPTH_NORMALIZATION_RANGE, 1.8);
-    const passedViewer = sceneRelativeDepth < -this.DEPTH_FADE_START;
-    const viewerFade = passedViewer
-      ? Math.max(0, 1 - (Math.abs(sceneRelativeDepth) - this.DEPTH_FADE_START) / this.DEPTH_FADE_RANGE)
-      : 1;
-    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade);
-    const scale = 0.72 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.36;
-    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
     const side: 'left' | 'right' = index % 2 === 0 ? 'left' : 'right';
-    const laneDirection = side === 'left' ? -1 : 1;
-    const facingDirection = side === 'left' ? 1 : -1;
-    const baseLaneOffset = 280;
-    const laneCompression = Math.min(distance * this.DEPTH_LATERAL_COMPRESSION, 170);
-    const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
-    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * this.DEPTH_VERTICAL_FACTOR));
-    const zOffset = -sceneRelativeDepth * this.DEPTH_Z_FACTOR;
-    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * this.DEPTH_ROTATE_X_FACTOR));
-    const rotateY = facingDirection * Math.max(4, Math.min(18, 6 + distance * this.DEPTH_ROTATE_Y_FACTOR));
-    const progressPercent = this.getSegmentProgress(segment);
+    const geometry = this.computeSlideGeometry(depthCenter, currentDepth, {
+      side,
+      baseLaneOffset: 280,
+      laneCompressionCap: 170,
+      scaleBase: 0.72,
+      scaleSpan: 0.36,
+      opacityFactor: 1
+    });
 
     return {
       segment,
@@ -420,12 +457,12 @@ export class App implements OnInit, OnDestroy {
       index,
       side,
       isActive: segment.id === activeId,
-      isVisible: distance <= this.DEPTH_VISIBILITY_RANGE,
-      opacity,
+      isVisible: geometry.isVisible,
+      opacity: geometry.opacity,
       zIndex: segment.id === activeId ? 5 : Math.max(1, 4 - index),
-      blur: `blur(${blurAmount.toFixed(2)}px)`,
-      transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
-      progressPercent,
+      blur: geometry.blur,
+      transform: geometry.transform,
+      progressPercent: this.getSegmentProgress(segment),
       projectPreviewTitles: projects.slice(0, 3).map(project => project.title),
       isSubmilestone: false,
       isSegmentCard: false,
@@ -457,26 +494,14 @@ export class App implements OnInit, OnDestroy {
     currentDepth: number,
     side: 'left' | 'right'
   ): SegmentCardSlide {
-    const relativeDepth = depth - currentDepth;
-    const sceneRelativeDepth = relativeDepth * this.SCENE_DEPTH_MULTIPLIER;
-    const distance = Math.abs(sceneRelativeDepth);
-    const normalizedDistance = Math.min(distance / this.DEPTH_NORMALIZATION_RANGE, 1.8);
-    const passedViewer = sceneRelativeDepth < -this.DEPTH_FADE_START;
-    const viewerFade = passedViewer
-      ? Math.max(0, 1 - (Math.abs(sceneRelativeDepth) - this.DEPTH_FADE_START) / this.DEPTH_FADE_RANGE)
-      : 1;
-    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade) * 0.8;
-    const scale = 0.6 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.3;
-    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
-    const laneDirection = side === 'left' ? -1 : 1;
-    const facingDirection = side === 'left' ? 1 : -1;
-    const baseLaneOffset = 220;
-    const laneCompression = Math.min(distance * this.DEPTH_LATERAL_COMPRESSION, 130);
-    const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
-    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * this.DEPTH_VERTICAL_FACTOR));
-    const zOffset = -sceneRelativeDepth * this.DEPTH_Z_FACTOR;
-    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * this.DEPTH_ROTATE_X_FACTOR));
-    const rotateY = facingDirection * Math.max(4, Math.min(18, 6 + distance * this.DEPTH_ROTATE_Y_FACTOR));
+    const geometry = this.computeSlideGeometry(depth, currentDepth, {
+      side,
+      baseLaneOffset: 220,
+      laneCompressionCap: 130,
+      scaleBase: 0.6,
+      scaleSpan: 0.3,
+      opacityFactor: 0.8
+    });
 
     return {
       segment,
@@ -484,11 +509,11 @@ export class App implements OnInit, OnDestroy {
       projects,
       index,
       side,
-      isVisible: distance <= this.DEPTH_VISIBILITY_RANGE,
-      opacity,
-      zIndex: Math.max(0, 3 - Math.floor(distance / 80)),
-      blur: `blur(${blurAmount.toFixed(2)}px)`,
-      transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
+      isVisible: geometry.isVisible,
+      opacity: geometry.opacity,
+      zIndex: Math.max(0, 3 - Math.floor(geometry.distance / 80)),
+      blur: geometry.blur,
+      transform: geometry.transform,
       isSubmilestone: false,
       isSegmentCard: true,
       isSegmentChoice: false,
@@ -505,26 +530,14 @@ export class App implements OnInit, OnDestroy {
     currentDepth: number,
     side: 'left' | 'right'
   ): SubmilestoneSlide {
-    const relativeDepth = depth - currentDepth;
-    const sceneRelativeDepth = relativeDepth * this.SCENE_DEPTH_MULTIPLIER;
-    const distance = Math.abs(sceneRelativeDepth);
-    const normalizedDistance = Math.min(distance / this.DEPTH_NORMALIZATION_RANGE, 1.8);
-    const passedViewer = sceneRelativeDepth < -this.DEPTH_FADE_START;
-    const viewerFade = passedViewer
-      ? Math.max(0, 1 - (Math.abs(sceneRelativeDepth) - this.DEPTH_FADE_START) / this.DEPTH_FADE_RANGE)
-      : 1;
-    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade) * 0.7;
-    const scale = 0.5 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.25;
-    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
-    const laneDirection = side === 'left' ? -1 : 1;
-    const facingDirection = side === 'left' ? 1 : -1;
-    const baseLaneOffset = 160;
-    const laneCompression = Math.min(distance * this.DEPTH_LATERAL_COMPRESSION, 100);
-    const lateralOffset = laneDirection * (baseLaneOffset - laneCompression);
-    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * this.DEPTH_VERTICAL_FACTOR));
-    const zOffset = -sceneRelativeDepth * this.DEPTH_Z_FACTOR;
-    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * this.DEPTH_ROTATE_X_FACTOR));
-    const rotateY = facingDirection * Math.max(4, Math.min(18, 6 + distance * this.DEPTH_ROTATE_Y_FACTOR));
+    const geometry = this.computeSlideGeometry(depth, currentDepth, {
+      side,
+      baseLaneOffset: 160,
+      laneCompressionCap: 100,
+      scaleBase: 0.5,
+      scaleSpan: 0.25,
+      opacityFactor: 0.7
+    });
 
     return {
       segment,
@@ -533,11 +546,11 @@ export class App implements OnInit, OnDestroy {
       index: globalIndex,
       globalIndex,
       side,
-      isVisible: distance <= this.DEPTH_VISIBILITY_RANGE,
-      opacity,
-      zIndex: Math.max(0, 3 - Math.floor(distance / 80)),
-      blur: `blur(${blurAmount.toFixed(2)}px)`,
-      transform: `translate3d(${lateralOffset.toFixed(2)}px, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
+      isVisible: geometry.isVisible,
+      opacity: geometry.opacity,
+      zIndex: Math.max(0, 3 - Math.floor(geometry.distance / 80)),
+      blur: geometry.blur,
+      transform: geometry.transform,
       isSubmilestone: true,
       isSegmentCard: false,
       isSegmentChoice: false,
@@ -551,30 +564,24 @@ export class App implements OnInit, OnDestroy {
     depth: number,
     currentDepth: number
   ): SegmentChoiceSlide {
-    const relativeDepth = depth - currentDepth;
-    const sceneRelativeDepth = relativeDepth * this.SCENE_DEPTH_MULTIPLIER;
-    const distance = Math.abs(sceneRelativeDepth);
-    const normalizedDistance = Math.min(distance / this.DEPTH_NORMALIZATION_RANGE, 1.8);
-    const passedViewer = sceneRelativeDepth < -this.DEPTH_FADE_START;
-    const viewerFade = passedViewer
-      ? Math.max(0, 1 - (Math.abs(sceneRelativeDepth) - this.DEPTH_FADE_START) / this.DEPTH_FADE_RANGE)
-      : 1;
-    const opacity = Math.max(0, (1 - normalizedDistance * 0.55) * viewerFade);
-    const scale = 0.72 + Math.max(0, 1 - distance / this.DEPTH_SCALE_RANGE) * 0.36;
-    const blurAmount = Math.min(Math.max(0, (normalizedDistance - 0.7) * 2.5), 4);
-    const verticalOffset = Math.max(-92, Math.min(92, sceneRelativeDepth * this.DEPTH_VERTICAL_FACTOR));
-    const zOffset = -sceneRelativeDepth * this.DEPTH_Z_FACTOR;
-    const rotateX = Math.max(-14, Math.min(14, -sceneRelativeDepth * this.DEPTH_ROTATE_X_FACTOR));
+    const geometry = this.computeSlideGeometry(depth, currentDepth, {
+      side: 'center',
+      baseLaneOffset: 0,
+      laneCompressionCap: 0,
+      scaleBase: 0.72,
+      scaleSpan: 0.36,
+      opacityFactor: 1
+    });
 
     return {
       segment,
       index,
       globalIndex: index,
-      isVisible: distance <= this.DEPTH_VISIBILITY_RANGE,
-      opacity,
+      isVisible: geometry.isVisible,
+      opacity: geometry.opacity,
       zIndex: 6,
-      blur: `blur(${blurAmount.toFixed(2)}px)`,
-      transform: `translate3d(0, ${verticalOffset.toFixed(2)}px, ${zOffset.toFixed(2)}px) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(4)})`,
+      blur: geometry.blur,
+      transform: geometry.transform,
       isSubmilestone: false,
       isSegmentCard: false,
       isSegmentChoice: true,
@@ -594,6 +601,20 @@ export class App implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
+    this.loadTimeline();
+
+    this.timelineApi.getProjects().subscribe({
+      next: (response) => this.allProjects.set(response.projects),
+      error: () => console.error('Failed to load projects')
+    });
+
+    this.motionQuery.addEventListener('change', this.onMotionChange);
+  }
+
+  loadTimeline(): void {
+    this.isLoading.set(true);
+    this.loadError.set(null);
+
     this.timelineApi.getTimeline().subscribe({
       next: (response) => {
         this.timelineSegments.set(response.timelineSegments);
@@ -619,13 +640,6 @@ export class App implements OnInit, OnDestroy {
         this.isLoading.set(false);
       }
     });
-
-    this.timelineApi.getProjects().subscribe({
-      next: (response) => this.allProjects.set(response.projects),
-      error: () => console.error('Failed to load projects')
-    });
-
-    this.motionQuery.addEventListener('change', this.onMotionChange);
   }
 
   ngOnDestroy(): void {
@@ -700,7 +714,7 @@ export class App implements OnInit, OnDestroy {
   jumpToSegment(segment: TimelineSegment): void {
     this.selectedProject.set(null);
     this.updateUrlHash(segment.id);
-    const targetDepth = Math.max(0, segment.depthStart - 25);
+    const targetDepth = Math.max(0, segment.depthStart - TUNNEL_CONFIG.choiceCardLeadIn);
     const jumpDuration = this.getManualJumpDuration(this.state.zoomDepth(), targetDepth);
     this.zoomEngine.jumpToDepth(targetDepth, jumpDuration);
   }
